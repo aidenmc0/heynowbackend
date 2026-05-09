@@ -1,0 +1,487 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ── Animations ── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes barGrow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ── ETRIA Brand Tokens ── */
+:root {
+  --red-500: #dc2626;
+  --red-600: #d32f2f;
+  --red-700: #b91c1c;
+  --red-50: #fef2f2;
+  --red-100: #fee2e2;
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-400: #94a3b8;
+  --slate-500: #64748b;
+  --slate-600: #475569;
+  --slate-800: #1e293b;
+  --slate-900: #0f172a;
+
+  /* ── Dynamic Spacing (คำนวณจากหน้าจอ) ── */
+  --page-pad: clamp(12px, 2vh, 32px);
+  --card-pad: clamp(20px, 3.5vh, 40px) clamp(20px, 4vw, 36px);
+  --section-gap: clamp(14px, 2.5vh, 28px);
+  --field-gap: clamp(14px, 2.2vh, 22px);
+  --row-gap: clamp(18px, 3vh, 28px);
+  --logo-size: clamp(140px, 22vw, 260px);
+}
+
+/* ── Page (คำนวณความสูงแบบ Dynamic) ── */
+.ep {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: "DM Sans", sans-serif;
+  background: var(--slate-50);
+  padding: var(--page-pad);
+  position: relative;
+  overflow: hidden; 
+}
+
+/* Background subtle gradients */
+.ep::before {
+  content: "";
+  position: absolute;
+  top: -18%;
+  right: -8%;
+  width: 560px;
+  height: 560px;
+  background: radial-gradient(
+    circle,
+    rgba(220, 38, 38, 0.03) 0%,
+    transparent 65%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+}
+.ep::after {
+  content: "";
+  position: absolute;
+  bottom: -14%;
+  left: -6%;
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(
+    circle,
+    rgba(220, 38, 38, 0.02) 0%,
+    transparent 65%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Dot grid */
+.bg-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(15, 23, 42, 0.03) 1px,
+    transparent 0
+  );
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+/* ── Card (คำนวณความกว้างแบบ Fluid) ── */
+.ec {
+  width: min(92vw, 440px);
+  background: #fff;
+  border: 1px solid var(--slate-200);
+  border-radius: 14px;
+  position: relative;
+  z-index: 1;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.03),
+    0 4px 12px rgba(15, 23, 42, 0.04),
+    0 20px 48px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Accent bar top - ETRIA Red */
+.ec-bar {
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--red-600) 0%,
+    var(--red-500) 50%,
+    var(--red-600) 100%
+  );
+  transform-origin: left;
+  animation: barGrow 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.ec-inner {
+  padding: var(--card-pad);
+}
+
+/* ── Brand Header ── */
+.bh {
+  text-align: center;
+  margin-bottom: var(--section-gap);
+}
+.bh-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--red-50);
+  border: 1px solid var(--red-100);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+.bh-icon svg {
+  width: 22px;
+  height: 22px;
+  color: var(--red-600);
+}
+.bh-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--red-600);
+  letter-spacing: 1.5px;
+}
+.bh-portal {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--slate-400);
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+/* Logo — ขนาดคำนวณตาม viewport */
+.bh img {
+  max-width: var(--logo-size);
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Divider */
+.bdiv {
+  height: 1px;
+  background: var(--slate-200);
+  margin-bottom: var(--section-gap);
+}
+
+/* ── Form Header ── */
+.fh-wrap {
+  margin-bottom: var(--section-gap);
+}
+.fh-title {
+  font-size: clamp(18px, 2.5vh, 22px);
+  font-weight: 600;
+  color: var(--slate-900);
+  margin-bottom: 4px;
+}
+.fh-sub {
+  font-size: clamp(12px, 1.8vh, 14px);
+  font-weight: 400;
+  color: var(--slate-500);
+  line-height: 1.5;
+}
+
+/* ── Error ── */
+.err {
+  padding: 10px 14px;
+  background: var(--red-50);
+  border: 1px solid var(--red-100);
+  border-radius: 8px;
+  color: var(--red-700);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: var(--field-gap);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.45;
+  animation: fadeInUp 0.35s ease forwards;
+}
+.err svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--red-500);
+}
+
+/* ── Fields ── */
+.fld {
+  margin-bottom: var(--field-gap);
+}
+.fld-l {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--slate-600);
+  margin-bottom: 6px;
+  transition: color 0.25s;
+}
+.fld.foc .fld-l {
+  color: var(--red-600);
+}
+.fld-w {
+  position: relative;
+}
+.fld-i {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: "DM Sans", sans-serif;
+  font-weight: 400;
+  color: var(--slate-900);
+  background: #fff;
+  border: 1.5px solid var(--slate-200);
+  border-radius: 8px;
+  outline: none;
+  transition:
+    border-color 0.25s,
+    box-shadow 0.25s,
+    background 0.25s;
+}
+.fld-i::placeholder {
+  color: var(--slate-400);
+  font-weight: 400;
+}
+.fld-i:focus {
+  border-color: var(--red-500);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
+}
+.fld.foc .fld-i {
+  border-color: var(--red-500);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
+}
+
+.pw-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--slate-400);
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+.pw-toggle:hover {
+  color: var(--slate-600);
+}
+.pw-toggle:focus-visible {
+  outline: 2px solid var(--red-500);
+  outline-offset: 1px;
+}
+
+/* ── Row: Remember + Forgot ── */
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--row-gap);
+}
+.chk-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.chk-wrap input[type="checkbox"] {
+  display: none;
+}
+.chk-box {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--slate-300);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  background: #fff;
+}
+.chk-wrap input:checked + .chk-box {
+  background: var(--red-600);
+  border-color: var(--red-600);
+}
+.chk-wrap input:checked + .chk-box svg {
+  opacity: 1;
+}
+.chk-box svg {
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.chk-label {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--slate-500);
+  user-select: none;
+}
+.forgot {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--red-600);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.forgot:hover {
+  color: var(--red-700);
+}
+
+/* ── Button - ETRIA Red ── */
+.btn {
+  width: 100%;
+  padding: 11px;
+  background: var(--red-600);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "DM Sans", sans-serif;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+.btn:hover:not(:disabled) {
+  background: var(--red-700);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.25);
+}
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.15);
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.btn:focus-visible {
+  outline: 2px solid var(--red-500);
+  outline-offset: 3px;
+}
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+/* ── Need Access ── */
+.need {
+  margin-top: clamp(12px, 2vh, 24px);
+  text-align: center;
+  font-size: 13px;
+  color: var(--slate-400);
+  font-weight: 400;
+}
+.need a {
+  color: var(--red-600);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.need a:hover {
+  color: var(--red-700);
+  text-decoration: underline;
+}
+
+/* ── Entrance ── */
+.ani {
+  opacity: 0;
+  transform: translateY(16px);
+}
+.ani.on {
+  animation: fadeInUp 0.55s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+.d1 {
+  animation-delay: 0.1s;
+}
+.d2 {
+  animation-delay: 0.2s;
+}
+.d3 {
+  animation-delay: 0.3s;
+}
+.d4 {
+  animation-delay: 0.38s;
+}
+.d5 {
+  animation-delay: 0.46s;
+}
+.d6 {
+  animation-delay: 0.54s;
+}
+
+/* ── Fallback สำหรับจอเล็กมาก ── */
+@media (max-width: 360px) {
+  .ec {
+    width: 100%;
+    border-radius: 10px;
+  }
+  :root {
+    --logo-size: 140px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
