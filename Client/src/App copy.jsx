@@ -49,6 +49,39 @@ function App() {
         {/* Department */}
         <Route path="/department/list" element={<PrivateRoute> <DepartmentList /> </PrivateRoute>} />
 
+        {/* Access */}
+        <Route path="/access/list" element={<PrivateRoute> <AccessList /> </PrivateRoute>} />
+
+        {/* Equipment */}
+        <Route path="/equipment/list" element={<PrivateRoute> <EquipmentList /> </PrivateRoute>} />
+
+        {/* Maintenance */}
+        <Route path="/maintenance/list" element={<PrivateRoute> <MaintenanceList /> </PrivateRoute>} />
+
+        {/* Purchase */}
+        <Route path="/purchase/list" element={<PrivateRoute> <PurchaseList /> </PrivateRoute>} />
+
+        {/* Software */}
+        <Route path="/software/list" element={<PrivateRoute> <SoftwareList />  </PrivateRoute>} />
+
+        {/* Takeout */}
+        <Route path="/takeout/list" element={<PrivateRoute> <TakeoutList /> </PrivateRoute>} />
+
+        {/* Token */}
+        <Route path="/token/list" element={<PrivateRoute> <TokenList /> </PrivateRoute>} />
+
+        {/* Type Equipment */}
+        <Route path="/typeEquipment/list" element={<PrivateRoute>  </PrivateRoute>} />
+
+        {/* Type Maintenance */}
+        <Route path="/typeMaintenance/list" element={<PrivateRoute>  </PrivateRoute>} />
+
+        {/* Type Software */}
+        <Route path="/typeSoftware/list" element={<PrivateRoute>  </PrivateRoute>} />
+
+        {/* Vendor */}
+        <Route path="/vendor/list" element={<PrivateRoute> <VendorList /> </PrivateRoute>} />
+
         {/* fallback */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
 

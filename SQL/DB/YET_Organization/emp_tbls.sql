@@ -1,24 +1,21 @@
 -- =========================================
--- Employee Control
+-- Employee Control with Supabase
 -- =========================================
 
 CREATE TABLE emp_tbls (
-    emp_code       NVARCHAR(10)    NOT NULL,
-    emp_no         INT             NOT NULL,
-    dep_code       NVARCHAR(20)    NOT NULL,
-    emp_img        NVARCHAR(255)   NULL,
-    emp_type       NVARCHAR(10)    NOT NULL,
-    emp_prefix     NVARCHAR(5)     NOT NULL,
-    emp_name       NVARCHAR(25)    NOT NULL,
-    emp_surname    NVARCHAR(25)    NOT NULL,
-    emp_position   NVARCHAR(10)    NOT NULL,
-    emp_email      NVARCHAR(100)   NOT NULL,
-    emp_password   NVARCHAR(100)   NOT NULL,
-    [delete]       NVARCHAR(1)     NOT NULL,
-    createdBy      NVARCHAR(50)    NOT NULL,
-    updatedBy      NVARCHAR(50)    NULL,
-    createdAt      DATETIME2(7)    NOT NULL,
-    updatedAt      DATETIME2(7)    NOT NULL,
-
-    CONSTRAINT PK_emp_tbls PRIMARY KEY (emp_code)
+    emp_code       VARCHAR(10)    PRIMARY KEY,
+    dep_code       VARCHAR(20)    NOT NULL,
+    emp_img        VARCHAR(255),
+    emp_type       VARCHAR(10)    NOT NULL,
+    emp_prefix     VARCHAR(5)     NOT NULL,
+    emp_name       VARCHAR(25)    NOT NULL,
+    emp_surname    VARCHAR(25)    NOT NULL,
+    emp_position   VARCHAR(10)    NOT NULL,
+    emp_tel        VARCHAR(15)    NOT NULL,
+    emp_password   VARCHAR(100)   NOT NULL,
+    deleteflag     VARCHAR(1)     NOT NULL,
+    createdby      VARCHAR(50)    NOT NULL,
+    updatedby      VARCHAR(50),
+    createdat      TIMESTAMP      NOT NULL DEFAULT NOW(),
+    updatedat      TIMESTAMP      NOT NULL DEFAULT NOW()
 );
