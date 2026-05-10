@@ -22,19 +22,18 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     setLoading(true);
     setError(null);
 
     try {
-      // ── Step 1: Login Request ────────────────────────────
+      // ── Step 1: Login ────────────────────────────────────
       const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          empCode: username,
-          password: password
-        })
+          emp_code: username,   // ✅ แก้จาก empCode → emp_code ให้ตรงกับ backend
+          password,
+        }),
       });
 
       const data = await res.json();
@@ -43,35 +42,27 @@ export default function Login() {
         throw new Error(data.message || "Login failed");
       }
 
-      // 💾 Save token & basic employee info
+      // 💾 Save token & employee info
       localStorage.setItem("token", data.token);
       localStorage.setItem("employee", JSON.stringify(data.employee));
 
-      // ── Step 2: Fetch Full Profile for Sidebar/Navbar ────
-      // 🌟 เพิ่ม cache: 'no-cache' เพื่อบังคับให้ยิง API ใหม่เสมอ ไม่ติด 304 Not Modified
-      const profileRes = await fetch(`${API_URL}/Employee/${data.employee.empCode}`, {
+      // ── Step 2: Fetch Full Profile ───────────────────────
+      const profileRes = await fetch(`${API_URL}/employee/${data.employee.emp_code}`, {
         headers: {
           Authorization: `Bearer ${data.token}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        cache: 'no-cache'
+        cache: "no-cache",
       });
 
       if (profileRes.ok) {
         const profileJson = await profileRes.json();
-
-        // 🌟 FIX: รองรับทั้ง API ที่ห่อด้วย { data: {...} } และ API ที่ส่ง {...} มาตรงๆ
-        // ถ้ามี profileJson.data ให้ใช้อันนั้น ถ้าไม่มีแสดงว่า API ส่งมาตรง ให้ใช้ profileJson เลย
         const profileData = profileJson.data || profileJson;
-
-        // 💾 Save detailed profile to localStorage
         localStorage.setItem("employeeProfile", JSON.stringify(profileData));
       } else {
-        // Fallback: ถ้าดึง Profile ละเอียดไม่สำเร็จ ให้ใช้ข้อมูลจาก Login แทน
         localStorage.setItem("employeeProfile", JSON.stringify(data.employee));
       }
 
-      // 🔥 Redirect to Dashboard
       navigate("/");
 
     } catch (err) {
@@ -156,7 +147,7 @@ export default function Login() {
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
                       <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
-                      <path d="m14.12 14.12a3 3 0 1 1-4.24-4.24" /> {/* 🌟 Fix SVG path ให้แสดงผลถูกต้อง */}
+                      <path d="m14.12 14.12a3 3 0 1 1-4.24-4.24" />
                       <line x1="1" y1="1" x2="23" y2="23" />
                     </svg>
                   ) : (
@@ -171,7 +162,11 @@ export default function Login() {
 
             <div className={`form-row ani${mounted ? " on d5" : ""}`}>
               <label className="chk-wrap">
-                <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
+                <input
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                />
                 <span className="chk-box">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12" />

@@ -1,6 +1,6 @@
 /**
- * EquipmentList.jsx  —  thin config wrapper
- * Location: src/Routes/Equipment/EquipmentList.jsx
+ * EmployeeList.jsx  —  thin config wrapper
+ * Location: src/Routes/Employee/EmployeeList.jsx
  *
  * All shared logic (fetch, search, pagination, expand) lives in DataListPage.
  * Only change things HERE: columns, API path, search fields, expand content.
@@ -9,10 +9,11 @@
 import { useState, useCallback } from "react";
 import {
   CheckCircle,
-  AlertCircle,
-  AlertTriangle,
+  XCircle,
   ChevronDown,
   Filter,
+  ShieldCheck,
+  User,
 } from "lucide-react";
 import DataListPage from "../../Components/DataTable/DetailListPage";
 import DateRangeFilter from "../../Components/DataTable/DateRangeFilter";
@@ -22,30 +23,47 @@ import { applyDateRange } from "../../Components/DataTable/DateRangeUtils";
 // Helpers
 // ─────────────────────────────────────────────────────────────
 
-/** Status badge — reused in column cell and expanded panel */
-function StatusBadge({ status }) {
+/** Employee type badge */
+function TypeBadge({ type }) {
   const styles = {
-    Normal: {
-      icon: <CheckCircle size={12} className="text-green-600" />,
-      text: "text-green-700 bg-green-50 border-green-200",
+    ADMIN: {
+      icon: <ShieldCheck size={12} className="text-purple-600" />,
+      text: "text-purple-700 bg-purple-50 border-purple-200",
     },
-    Disable: {
-      icon: <AlertCircle size={12} className="text-red-600" />,
-      text: "text-red-700 bg-red-50 border-red-200",
-    },
-    Maintenance: {
-      icon: <AlertTriangle size={12} className="text-amber-600" />,
-      text: "text-amber-700 bg-amber-50 border-amber-200",
+    STAFF: {
+      icon: <User size={12} className="text-blue-600" />,
+      text: "text-blue-700 bg-blue-50 border-blue-200",
     },
   };
-  const s = styles[status] ?? styles.Normal;
+  const s = styles[type] ?? styles.STAFF;
 
   return (
     <span
       className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold border ${s.text}`}
     >
       {s.icon}
-      {status}
+      {type}
+    </span>
+  );
+}
+
+/** Active/Delete flag badge */
+function ActiveBadge({ deleteflag }) {
+  const isActive = deleteflag === "N";
+  return (
+    <span
+      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold border ${
+        isActive
+          ? "text-green-700 bg-green-50 border-green-200"
+          : "text-red-700 bg-red-50 border-red-200"
+      }`}
+    >
+      {isActive ? (
+        <CheckCircle size={12} className="text-green-600" />
+      ) : (
+        <XCircle size={12} className="text-red-600" />
+      )}
+      {isActive ? "Active" : "Inactive"}
     </span>
   );
 }
@@ -53,77 +71,69 @@ function StatusBadge({ status }) {
 // ─────────────────────────────────────────────────────────────
 // 1. Simple search fields
 // ─────────────────────────────────────────────────────────────
-const SEARCH_FIELDS = ["EqpCode", "TypEqpName", "EqpBrand", "EmpName"];
+const SEARCH_FIELDS = ["emp_code", "emp_name", "emp_surname", "emp_position", "dep_code"];
 
 // ─────────────────────────────────────────────────────────────
 // 2. Table columns
 // ─────────────────────────────────────────────────────────────
 const COLUMNS = [
   {
-    header: "Code",
-    cell: (eqp) => (
-      <>
-        <div className="font-semibold text-slate-800 text-xs">
-          {eqp.EqpCode}
+    header: "Employee",
+    cell: (emp) => (
+      <div className="flex items-center gap-3">
+        <img
+          src={emp.emp_img || "https://ui-avatars.com/api/?name=" + emp.emp_name}
+          alt={emp.emp_name}
+          className="w-8 h-8 rounded-full object-cover border border-slate-200 flex-shrink-0"
+          onError={(e) => {
+            e.target.src =
+              "https://ui-avatars.com/api/?name=" + emp.emp_name + "&background=e2e8f0&color=475569";
+          }}
+        />
+        <div>
+          <div className="font-semibold text-slate-800 text-xs">
+            {emp.emp_prefix} {emp.emp_name} {emp.emp_surname}
+          </div>
+          <div className="text-[11px] text-slate-500">{emp.emp_code}</div>
         </div>
-        <div className="text-[11px] text-slate-500 ">AC : {eqp.EqpAsset}</div>
+      </div>
+    ),
+  },
+  {
+    header: "Position",
+    cell: (emp) => (
+      <>
+        <div className="font-medium text-slate-800 text-xs">{emp.emp_position}</div>
+        <div className="text-[11px] text-slate-500">{emp.dep_code}</div>
       </>
     ),
   },
   {
-    header: "Type / Brand",
-    cell: (eqp) => (
-      <>
-        <div className="font-medium text-slate-800 text-xs">
-          {eqp.EqpBrand} - {eqp.EqpSerie}
-        </div>
-        <div className="text-[11px] text-slate-500">
-          SN : {eqp.EqpSerial}
-        </div>
-      </>
-    ),
+    header: "Type",
+    cell: (emp) => <TypeBadge type={emp.emp_type} />,
   },
   {
     header: "Status",
-    cell: (eqp) => <StatusBadge status={eqp.EqpStatus} />,
+    cell: (emp) => <ActiveBadge deleteflag={emp.deleteflag} />,
   },
   {
-    header: "Owner",
+    header: "Contact",
     headerClassName: "hidden lg:table-cell",
     className: "hidden lg:table-cell",
-    cell: (eqp) => (
-      <>
-        <div className="font-medium text-slate-800 text-xs">
-          {eqp.EmpPrefix} {eqp.EmpName} {eqp.EmpSurname}
-        </div>
-        <div className="text-[11px] text-slate-500">{eqp.EmpCode.split("-")[0]} : {eqp.EmpPosition}</div>
-      </>
+    cell: (emp) => (
+      <div className="text-xs text-slate-600">{emp.emp_tel || "—"}</div>
     ),
   },
   {
-    header: "Department",
+    header: "Created",
     headerClassName: "hidden lg:table-cell",
     className: "hidden lg:table-cell",
-    cell: (eqp) => (
-      <>
-        <div className="font-medium text-slate-800 text-xs">{eqp.DepCode.split("-")[0]}</div>
-        <div className="text-[11px] text-slate-500">{eqp.DepFull}</div>
-      </>
-    ),
-  },
-  {
-    header: "Vendor",
-    headerClassName: "hidden lg:table-cell",
-    className: "hidden lg:table-cell",
-    cell: (eqp) => (
-      <>
-        <div className="font-medium text-slate-800 text-xs">
-          {eqp.VdrCompany}
-        </div>
-        <div className="text-[11px] text-slate-400">
-          {eqp.VdrName}
-        </div>
-      </>
+    cell: (emp) => (
+      <div className="text-[11px] text-slate-500">
+        {emp.createdat
+          ? new Date(emp.createdat).toLocaleDateString("th-TH")
+          : "—"}
+      </div>
     ),
   },
 ];
@@ -131,39 +141,49 @@ const COLUMNS = [
 // ─────────────────────────────────────────────────────────────
 // 3. Expanded panel content
 // ─────────────────────────────────────────────────────────────
-function EquipmentExpandedContent(eqp) {
+function EmployeeExpandedContent(emp) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <div>
         <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">
-          Purchase Info
-        </p>
-        <p className="text-sm text-slate-800">PR: {eqp.PurPr}</p>
-        <p className="text-sm text-slate-800">PO: {eqp.PurPo}</p>
-        <p className="text-sm text-slate-800">Status: {eqp.PurStatus}</p>
-      </div>
-      <div>
-        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">
-          Vendor Details
-        </p>
-        <p className="text-sm text-slate-800">{eqp.VdrName}</p>
-        <p className="text-sm text-slate-800">Company: {eqp.VdrCompany}</p>
-      </div>
-      <div>
-        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">
-          Created
+          Personal Info
         </p>
         <p className="text-sm text-slate-800">
-          {new Date(eqp.createdAt).toLocaleDateString()} at{" "}
-          {new Date(eqp.createdAt).toLocaleTimeString()}
+          {emp.emp_prefix} {emp.emp_name} {emp.emp_surname}
         </p>
+        <p className="text-sm text-slate-500">{emp.emp_position}</p>
+        <p className="text-sm text-slate-500">Tel: {emp.emp_tel || "—"}</p>
       </div>
       <div>
         <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">
-          Equipment ID
+          Department
+        </p>
+        <p className="text-sm text-slate-800">{emp.dep_code}</p>
+        <p className="text-sm text-slate-500">Type: {emp.emp_type}</p>
+      </div>
+      <div>
+        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">
+          Record Info
+        </p>
+        <p className="text-sm text-slate-800">
+          Created:{" "}
+          {emp.createdat
+            ? new Date(emp.createdat).toLocaleDateString("th-TH")
+            : "—"}
+        </p>
+        <p className="text-sm text-slate-500">By: {emp.createdby}</p>
+        {emp.updatedat && (
+          <p className="text-sm text-slate-500">
+            Updated: {new Date(emp.updatedat).toLocaleDateString("th-TH")}
+          </p>
+        )}
+      </div>
+      <div>
+        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">
+          Employee ID
         </p>
         <p className="text-sm text-slate-800 font-mono bg-white px-2 py-1 rounded border border-slate-200 inline-block">
-          {eqp.EqpCode}
+          {emp.emp_code}
         </p>
       </div>
     </div>
@@ -172,23 +192,24 @@ function EquipmentExpandedContent(eqp) {
 
 // ── Config ─────────────────────────────────────────────────
 const MENU_CONFIG = {
-  apiPath: "/Equipment/EquipmentList",
-  entityKey: "EqpCode",
+  apiPath: "/employee",
+  entityKey: "emp_code",
   columns: COLUMNS,
   searchFields: SEARCH_FIELDS,
-  expandedContent: EquipmentExpandedContent,
-  addButtonLabel: "+ Add Equipment",
-  loadingText: "Loading equipment data...",
-  emptyText: "No equipment found",
-  onAdd: () => console.log("Add equipment"),
-  onEdit: (eqp) => console.log("Edit", eqp.EqpCode),
-  onDelete: (eqp) => console.log("Delete", eqp.EqpCode),
+  expandedContent: EmployeeExpandedContent,
+  addButtonLabel: "+ Add Employee",
+  loadingText: "Loading employee data...",
+  emptyText: "No employees found",
+  onAdd: () => console.log("Add employee"),
+  onEdit: (emp) => console.log("Edit", emp.emp_code),
+  onDelete: (emp) => console.log("Delete", emp.emp_code),
 };
 
 // ─────────────────────────────────────────────────────────────
-// 4. Main component — holds statusFilter + date range state
+// 4. Main component — holds typeFilter + date range state
 // ─────────────────────────────────────────────────────────────
-export default function EquipmentList() {
+export default function EmployeeList() {
+  const [typeFilter, setTypeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -197,21 +218,45 @@ export default function EquipmentList() {
   const filterFn = useCallback(
     (rows) => {
       let result = rows;
-      if (statusFilter !== "all") {
-        result = result.filter((r) => r.EqpStatus === statusFilter);
+      if (typeFilter !== "all") {
+        result = result.filter((r) => r.emp_type === typeFilter);
       }
-      result = applyDateRange(result, "PurReceiveDate", startDate, endDate);
+      if (statusFilter !== "all") {
+        result = result.filter((r) => r.deleteflag === statusFilter);
+      }
+      result = applyDateRange(result, "createdat", startDate, endDate);
       return result;
     },
-    [statusFilter, startDate, endDate],
+    [typeFilter, statusFilter, startDate, endDate],
   );
 
   // ── extraFilters — renders into Toolbar slot ───────────────
   const extraFilters = useCallback(
     () => (
       <>
+        {/* Type dropdown */}
+        <div className="relative flex-shrink-0 w-36">
+          <Filter
+            className="absolute left-2.5 top-1.5 text-slate-400"
+            size={15}
+          />
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="w-full pl-8 pr-3 py-0.5 border border-slate-200 rounded-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 appearance-none cursor-pointer bg-slate-50/50 text-sm transition-colors text-slate-600"
+          >
+            <option value="all">All Types</option>
+            <option value="ADMIN">Admin</option>
+            <option value="STAFF">Staff</option>
+          </select>
+          <ChevronDown
+            className="absolute right-2.5 top-2 text-slate-400 pointer-events-none"
+            size={15}
+          />
+        </div>
+
         {/* Status dropdown */}
-        <div className="relative flex-shrink-0 w-44">
+        <div className="relative flex-shrink-0 w-36">
           <Filter
             className="absolute left-2.5 top-1.5 text-slate-400"
             size={15}
@@ -222,9 +267,8 @@ export default function EquipmentList() {
             className="w-full pl-8 pr-3 py-0.5 border border-slate-200 rounded-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 appearance-none cursor-pointer bg-slate-50/50 text-sm transition-colors text-slate-600"
           >
             <option value="all">All Status</option>
-            <option value="Normal">Normal</option>
-            <option value="Disable">Disabled</option>
-            <option value="Maintenance">Maintenance</option>
+            <option value="N">Active</option>
+            <option value="Y">Inactive</option>
           </select>
           <ChevronDown
             className="absolute right-2.5 top-2 text-slate-400 pointer-events-none"
@@ -245,7 +289,7 @@ export default function EquipmentList() {
         />
       </>
     ),
-    [statusFilter, startDate, endDate],
+    [typeFilter, statusFilter, startDate, endDate],
   );
 
   const finalConfig = {
@@ -253,6 +297,6 @@ export default function EquipmentList() {
     filterFn,
     extraFilters,
   };
-  
+
   return <DataListPage config={finalConfig} />;
 }

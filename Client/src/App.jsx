@@ -1,19 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./Routes/Login";
 import Dashboard from "./Routes/Dashboard/Dashboard";
-import EquipmentList from "./Routes/Equipment/EquipmentList";
 
 import EmployeeList from "./Routes/Controls/Employee/EmployeeList";
 import CreateEmployee from "./Routes/Controls/Employee/CreateEmployee";
 import DepartmentList from "./Routes/Controls/Department/DepartmentList";
-import AccessList from "./Routes/Controls/Access/AccessList";
-
-import SoftwareList from "./Routes/Software/SoftwareList";
-import MaintenanceList from "./Routes/Maintenance/MaintenanceList";
-import PurchaseList from "./Routes/Purchase/PurchaseList";
-import TokenList from "./Routes/Token/TokenList";
-import TakeoutList from "./Routes/Takeout/TakeoutEquipmentList";
-import VendorList from "./Routes/Vendor/VendorList";
 
 const isAuthenticated = () => !!localStorage.getItem("token");
 

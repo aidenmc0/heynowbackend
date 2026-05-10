@@ -201,11 +201,11 @@ export function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) {
                   }`}
               >
                 <p className="text-sm font-semibold text-slate-700 leading-tight">
-                  {employeeProfile.EmpCode.split('-', 1)}
+                  {employeeProfile.emp_code}
 
                 </p>
                 <p className="text-[11px] text-slate-400 leading-tight">
-                  {employeeProfile.DepCode.split("-", 1)}-{employeeProfile.DepShort}
+                  {employeeProfile.dep_code}-{employeeProfile.dep_short}
                 </p>
               </div>
             </button>
@@ -217,9 +217,9 @@ export function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) {
               >
                 <div className="px-4 py-3 border-b border-slate-50">
                   <p className="text-sm font-semibold text-slate-800">
-                    {employeeProfile.EmpName + "." + employeeProfile.EmpSurname[0]}
+                    {employeeProfile.emp_name + "." + employeeProfile.emp_surname?.[0]}
                   </p>
-                  <p className="text-xs text-slate-400">{employeeProfile.DepCode.split("-", 1)} - {employeeProfile.DepShort}</p>
+                  <p className="text-xs text-slate-400">{employeeProfile.dep_code} - {employeeProfile.dep_short}</p>
                 </div>
 
                 <div className="p-1.5">

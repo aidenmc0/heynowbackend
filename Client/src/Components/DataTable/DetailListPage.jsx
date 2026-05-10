@@ -107,8 +107,8 @@ export default function DataListPage({ config }) {
           { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
         );
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        setRows(json.data || []);
+        const json = await res.json();        
+        setRows(Array.isArray(json) ? json : json.data || []);
       } catch (e) {
         setError(e?.message || "Failed to load data");
       } finally {
