@@ -1,7 +1,12 @@
+import { useState } from "react"; // 👉 1. เพิ่ม useState
 import DataListPage from "../../../Components/DataTable/DetailListPage";
 
+// 👉 2. Import Modals
+import CreateDepartment from "./CreateDepartment";
+import EditDepartment from "./EditDepartment";
+
 // ─────────────────────────────────────────────────────────────
-// 1. Table columns
+// 1. Table columns (เหมือนเดิม)
 // ─────────────────────────────────────────────────────────────
 const COLUMNS = [
   {
@@ -44,43 +49,28 @@ const COLUMNS = [
 ];
 
 // ─────────────────────────────────────────────────────────────
-// 2. Search fields
+// 2. Search fields & Expanded panel (เหมือนเดิม)
 // ─────────────────────────────────────────────────────────────
 const SEARCH_FIELDS = ["dep_code", "dep_full", "dep_short"];
 
-// ─────────────────────────────────────────────────────────────
-// 3. Expanded panel
-// ─────────────────────────────────────────────────────────────
 function DepartmentExpandedContent(dept) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <div>
-        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">
-          Department Code
-        </p>
-        <p className="text-sm text-slate-800 font-mono bg-white px-2 py-1 rounded border border-slate-200 inline-block">
-          {dept.dep_code}
-        </p>
+        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">Department Code</p>
+        <p className="text-sm text-slate-800 font-mono bg-white px-2 py-1 rounded border border-slate-200 inline-block">{dept.dep_code}</p>
       </div>
       <div>
-        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">
-          Full Name
-        </p>
+        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">Full Name</p>
         <p className="text-sm text-slate-800">{dept.dep_full}</p>
       </div>
       <div>
-        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">
-          Short Name
-        </p>
+        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">Short Name</p>
         <p className="text-sm text-slate-800">{dept.dep_short}</p>
       </div>
       <div>
-        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">
-          Record Info
-        </p>
-        <p className="text-sm text-slate-800">
-          Created: {dept.createdat ? new Date(dept.createdat).toLocaleDateString("th-TH") : "—"}
-        </p>
+        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">Record Info</p>
+        <p className="text-sm text-slate-800">Created: {dept.createdat ? new Date(dept.createdat).toLocaleDateString("th-TH") : "—"}</p>
         <p className="text-sm text-slate-500">By: {dept.createdby}</p>
       </div>
     </div>
@@ -88,22 +78,57 @@ function DepartmentExpandedContent(dept) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 4. Config
+// 3. Main Component
 // ─────────────────────────────────────────────────────────────
-const MENU_CONFIG = {
-  apiPath:         "/department",       // ✅ ตรงกับ backend route
-  entityKey:       "dep_code",          // ✅ lowercase
-  columns:         COLUMNS,
-  searchFields:    SEARCH_FIELDS,
-  expandedContent: DepartmentExpandedContent,
-  addButtonLabel:  "+ Add Department",
-  loadingText:     "Loading department data...",
-  emptyText:       "No departments found",
-  onAdd:    () => console.log("Add department"),
-  onEdit:   (dept) => console.log("Edit", dept.dep_code),
-  onDelete: (dept) => console.log("Delete", dept.dep_code),
-};
-
 export default function DepartmentList() {
-  return <DataListPage config={MENU_CONFIG} />;
+  // 👉 3. เพิ่ม State สำหรับควบคุม Modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingDept, setEditingDept] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleOpenModal = () => setIsModalOpen(true);
+
+  const handleSuccess = () => {
+    setIsModalOpen(false);
+    setEditingDept(null);
+    setRefreshKey((prev) => prev + 1); // Refresh DataListPage
+  };
+
+  const MENU_CONFIG = {
+    apiPath:         "/department",
+    entityKey:       "dep_code",
+    columns:         COLUMNS,
+    searchFields:    SEARCH_FIELDS,
+    expandedContent: DepartmentExpandedContent,
+    addButtonLabel:  "+ Add Department",
+    loadingText:     "Loading department data...",
+    emptyText:       "No departments found",
+    // 👉 4. เชื่อมปุ่มเข้ากับ State
+    onAdd:    handleOpenModal,
+    onEdit:   (dept) => setEditingDept(dept),
+    onDelete: (dept) => console.log("Delete", dept.dep_code),
+  };
+
+  return (
+    <>
+      {/* 👉 5. เพิ่ม key={refreshKey} เพื่อให้ Re-fetch ข้อมูลหลังบันทึก */}
+      <DataListPage key={refreshKey} config={MENU_CONFIG} />
+
+      {/* 👉 6. Render Modals */}
+      {isModalOpen && (
+        <CreateDepartment 
+          onClose={() => setIsModalOpen(false)} 
+          onSuccess={handleSuccess} 
+        />
+      )}
+
+      {editingDept && (
+        <EditDepartment 
+          department={editingDept} 
+          onClose={() => setEditingDept(null)} 
+          onSuccess={handleSuccess} 
+        />
+      )}
+    </>
+  );
 }
