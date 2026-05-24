@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X, Save, Loader2 } from "lucide-react";
-import { API_URL } from "../../../variable";
+import { API_URL } from "../../variable";
 
 // ข้อมูล Department สำหรับ Dropdown (ดึงมาจากข้อมูลที่คุณให้มา)
 const DEPARTMENTS = [

@@ -4,6 +4,10 @@ import Dashboard from "./Routes/Dashboard/Dashboard";
 
 import EmployeeList from "./Routes/Employee/EmployeeList"
 import CreateEmployee from "./Routes/Employee/CreateEmployee";
+
+import RoomList from "./Routes/Room/RoomList"
+import CreateRoom from "./Routes/Room/CreateRoom";
+
 import DepartmentList from "./Routes/Department/DepartmentList";
 
 const isAuthenticated = () => !!localStorage.getItem("token");
@@ -36,6 +40,10 @@ function App() {
         {/* Employee */}
         <Route path="/employee/list" element={<PrivateRoute> <EmployeeList /> </PrivateRoute>} />
         <Route path="/employee/create" element={<PrivateRoute> <CreateEmployee /> </PrivateRoute>} />
+
+        {/* Room */}
+        <Route path="/room/list" element={<PrivateRoute> <RoomList /> </PrivateRoute>} />
+        <Route path="/room/create" element={<PrivateRoute> <CreateRoom /> </PrivateRoute>} />
 
         {/* Department */}
         <Route path="/department/list" element={<PrivateRoute> <DepartmentList /> </PrivateRoute>} />

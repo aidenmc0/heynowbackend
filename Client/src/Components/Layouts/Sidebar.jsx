@@ -1,36 +1,29 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  BarChart3,
-  Laptop,
+  LayoutDashboard, 
+  ShieldCheck,
   Users,
   Building2,
-  ShieldCheck,
-  Wrench,
-  ShoppingCart,
-  AppWindow,
-  Ticket,
-  PackageOpen,
-  Store,
+  BedDouble,       
   ChevronsRight,
   ChevronsLeft,
   User,
   LogOut,
-
 } from "lucide-react";
 
 const menuItems = [
   {
     id: "dashboard",
-    icon: <BarChart3 size={18} />,
+    icon: <LayoutDashboard size={18} />, 
     label: "Dashboard",
     href: "/Dashboard",
   },
   {
-    id: "equipment",
-    icon: <Laptop size={18} />,
-    label: "Equipment",
-    href: "/Equipment/List",
+    id: "access",
+    icon: <ShieldCheck size={18} />,
+    label: "Access",
+    href: "/Access/list",
   },
   {
     id: "employee",
@@ -45,40 +38,10 @@ const menuItems = [
     href: "/Department/list",
   },
   {
-    id: "access",
-    icon: <ShieldCheck size={18} />,
-    label: "Access",
-    href: "/Access/list",
-  },
-  {
-    id: "maintenance",
-    icon: <Wrench size={18} />,
-    label: "Maintenance",
-    href: "/Maintenance/list",
-  },
-  {
-    id: "purchase",
-    icon: <ShoppingCart size={18} />,
-    label: "Purchase",
-    href: "/Purchase/list",
-  },
-  {
-    id: "software",
-    icon: <AppWindow size={18} />,
-    label: "Software",
-    href: "/Software/list",
-  },
-  {
-    id: "token",
-    icon: <Ticket size={18} />,
-    label: "Token",
-    href: "/Token/list",
-  },
-  {
-    id: "takeout",
-    icon: <PackageOpen size={18} />,
-    label: "Takeout",
-    href: "/Takeout/list",
+    id: "rooms", // แก้ id ให้ตรงกับ label
+    icon: <BedDouble size={18} />, 
+    label: "Rooms",
+    href: "/Rooms/List",
   },
 ];
 
@@ -95,7 +58,6 @@ export function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) {
   };
 
   const handleLogout = () => {
-    // 1. ลบข้อมูล Auth ตัวหลัก
     localStorage.removeItem("token");
     localStorage.removeItem("employee");
     localStorage.removeItem("employeeProfile");    
@@ -201,11 +163,10 @@ export function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) {
                   }`}
               >
                 <p className="text-sm font-semibold text-slate-700 leading-tight">
-                  {employeeProfile.emp_code}
-
+                  {employeeProfile?.emp_code}
                 </p>
                 <p className="text-[11px] text-slate-400 leading-tight">
-                  {employeeProfile.dep_code}-{employeeProfile.dep_short}
+                  {employeeProfile?.dep_code}-{employeeProfile?.dep_short}
                 </p>
               </div>
             </button>
@@ -217,9 +178,9 @@ export function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) {
               >
                 <div className="px-4 py-3 border-b border-slate-50">
                   <p className="text-sm font-semibold text-slate-800">
-                    {employeeProfile.emp_name + "." + employeeProfile.emp_surname?.[0]}
+                    {employeeProfile?.emp_name + "." + employeeProfile?.emp_surname?.[0]}
                   </p>
-                  <p className="text-xs text-slate-400">{employeeProfile.dep_code} - {employeeProfile.dep_short}</p>
+                  <p className="text-xs text-slate-400">{employeeProfile?.dep_code} - {employeeProfile?.dep_short}</p>
                 </div>
 
                 <div className="p-1.5">

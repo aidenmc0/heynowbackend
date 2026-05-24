@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X, Save, Loader2 } from "lucide-react";
-import { API_URL } from "../../../variable";
+import { API_URL } from "../../variable";
 
 export default function CreateDepartment({ onClose, onSuccess }) {
   const [form, setForm] = useState({

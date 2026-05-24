@@ -15,6 +15,7 @@ app.use(express.static('public'));
 app.use('/auth',        require('./Routes/Auth/route'));
 app.use('/employee',    require('./Routes/Employee/route'));
 app.use('/department',    require('./Routes/Department/route'));
+app.use('/room',    require('./Routes/Room/route'));
 
 // Global error handler (ต้องอยู่ท้ายสุดเสมอ)
 app.use(errorHandler);

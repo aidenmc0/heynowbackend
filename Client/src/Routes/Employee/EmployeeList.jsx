@@ -13,9 +13,9 @@ import {
   User,
   Building2,
 } from "lucide-react";
-import DataListPage from "../../../Components/DataTable/DetailListPage";
-import DateRangeFilter from "../../../Components/DataTable/DateRangeFilter";
-import { applyDateRange } from "../../../Components/DataTable/DateRangeUtils";
+import DataListPage from "../../Components/DataTable/DetailListPage";
+import DateRangeFilter from "../../Components/DataTable/DateRangeFilter";
+import { applyDateRange } from "../../Components/DataTable/DateRangeUtils";
 
 import CreateEmployee from "./CreateEmployee";
 import EditEmployee from "./EditEmployee";

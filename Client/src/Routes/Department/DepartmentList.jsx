@@ -1,5 +1,5 @@
 import { useState } from "react"; // 👉 1. เพิ่ม useState
-import DataListPage from "../../../Components/DataTable/DetailListPage";
+import DataListPage from "../../Components/DataTable/DetailListPage";
 
 // 👉 2. Import Modals
 import CreateDepartment from "./CreateDepartment";
