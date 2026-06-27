@@ -1,48 +1,123 @@
+/**
+ * RoomList.jsx — thin config wrapper
+ * Location: src/Routes/Controls/Room/RoomList.jsx
+ */
+
 import { useState, useCallback } from "react";
 import {
-  CheckCircle,
-  XCircle,
-  ChevronDown,
-  Filter,
-  DoorOpen,
-  Users,
-  DollarSign,
-  Hash,
+  ChevronDown, Filter, DoorOpen, Users, DollarSign, Hash,
+  BookOpen, FileText, Info,
 } from "lucide-react";
 import DataListPage from "../../Components/DataTable/DetailListPage";
 import CreateRoom from "./CreateRoom";
 import EditRoom from "./EditRoom";
 
-function ActiveBadge({ deleteflag }) {
-  const isActive = deleteflag === "N";
+// ─── Expanded Content Helpers (same pattern as Employee) ─────────────────────
+
+function InfoRow({ icon, label, value, mono = false }) {
+  if (!value) return null;
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold border ${
-      isActive ? "text-green-700 bg-green-50 border-green-200" : "text-red-700 bg-red-50 border-red-200"
-    }`}>
-      {isActive ? <CheckCircle size={12} className="text-green-600" /> : <XCircle size={12} className="text-red-600" />}
-      {isActive ? "Active" : "Inactive"}
-    </span>
+    <div className="flex items-start gap-3 py-2.5 border-b border-slate-100 last:border-0">
+      <span className="mt-0.5 flex-shrink-0 text-slate-400">{icon}</span>
+      <div className="flex-1 min-w-0">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">{label}</p>
+        <p className={`text-sm text-slate-800 break-words leading-snug ${
+          mono ? "font-mono bg-slate-100 px-1.5 py-0.5 rounded text-xs inline-block" : "font-medium"
+        }`}>{value}</p>
+      </div>
+    </div>
   );
 }
 
-export default function RoomList() {
-  const [lang, setLang] = useState("th");
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingRoom, setEditingRoom] = useState(null);
+function SectionCard({ title, children }) {
+  return (
+    <div className="rounded-xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
+      <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-200/80">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{title}</p>
+      </div>
+      <div className="px-4 py-1">{children}</div>
+    </div>
+  );
+}
 
-  const handleSuccess = () => {
-    setIsModalOpen(false);
-    setEditingRoom(null);
-    setRefreshKey((prev) => prev + 1);
+// ─── Room Expanded Content ────────────────────────────────────────────────────
+// รับ lang ผ่าน closure จาก RoomList
+
+function makeRoomExpandedContent(lang) {
+  return function RoomExpandedContent(room) {
+    const name    = room.details?.[`room_detail_${lang}_name`]      || "—";
+    const detail  = room.details?.[`room_detail_${lang}_detail`]    || null;
+    const story1M = room.details?.[`room_detail_${lang}_storyMain1`] || null;
+    const story1S = room.details?.[`room_detail_${lang}_storySub1`]  || null;
+    const story2M = room.details?.[`room_detail_${lang}_storyMain2`] || null;
+    const story2S = room.details?.[`room_detail_${lang}_storySub2`]  || null;
+
+    return (
+      <>
+        {/* Hero Card */}
+        <div className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-br from-slate-50 to-white border border-slate-200/80 shadow-sm">
+          <div className="w-14 h-14 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center flex-shrink-0">
+            <DoorOpen size={28} className="text-slate-400" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h4 className="text-base font-bold text-slate-900 leading-tight truncate">{name}</h4>
+            <p className="text-[11px] font-mono text-slate-400 mt-0.5">{room.room_id}</p>
+            <div className="flex flex-wrap items-center gap-3 mt-2">
+              <span className="inline-flex items-center gap-1 text-xs text-slate-600">
+                <Users size={13} className="text-slate-400" />
+                {room.room_capacity} คน
+              </span>
+              <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700">
+                <DollarSign size={13} className="text-emerald-500" />
+                ฿{Number(room.room_price).toLocaleString()}
+              </span>
+              <span className="inline-flex items-center gap-1 text-xs text-slate-600">
+                <Hash size={13} className="text-slate-400" />
+                {room.room_rooms} ห้อง
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Operating Info */}
+        <SectionCard title="Operating Info">
+          <InfoRow icon={<Hash size={14} />}        label="Room ID"   value={room.room_id} mono />
+          <InfoRow icon={<DollarSign size={14} />}  label="Price"     value={`฿${Number(room.room_price).toLocaleString()}`} />
+          <InfoRow icon={<Users size={14} />}       label="Capacity"  value={`${room.room_capacity} คน`} />
+          <InfoRow icon={<DoorOpen size={14} />}    label="Stock"     value={`${room.room_rooms} ห้อง`} />
+        </SectionCard>
+
+        {/* Room Detail */}
+        {detail && (
+          <SectionCard title="Room Description">
+            <InfoRow icon={<FileText size={14} />} label="Detail" value={detail} />
+          </SectionCard>
+        )}
+
+        {/* Story 1 */}
+        {(story1M || story1S) && (
+          <SectionCard title="Story 1">
+            {story1M && <InfoRow icon={<BookOpen size={14} />} label="Main" value={story1M} />}
+            {story1S && <InfoRow icon={<Info size={14} />}     label="Sub"  value={story1S} />}
+          </SectionCard>
+        )}
+
+        {/* Story 2 */}
+        {(story2M || story2S) && (
+          <SectionCard title="Story 2">
+            {story2M && <InfoRow icon={<BookOpen size={14} />} label="Main" value={story2M} />}
+            {story2S && <InfoRow icon={<Info size={14} />}     label="Sub"  value={story2S} />}
+          </SectionCard>
+        )}
+      </>
+    );
   };
+}
 
-  // Dynamic API Path ตามภาษาที่เลือก
-  const apiPath = `/room/${lang}`;
+// ─── Table Columns ────────────────────────────────────────────────────────────
 
-  const SEARCH_FIELDS = ["room_id", "details.room_detail_name"];
-
-  const COLUMNS = [
+function makeColumns(lang) {
+  return [
     {
       header: "Room Info",
       cell: (room) => (
@@ -88,83 +163,32 @@ export default function RoomList() {
         </div>
       ),
     },
-    {
-      header: "Status",
-      cell: (room) => <ActiveBadge deleteflag={room.deleteflag || "N"} />,
-    },
   ];
+}
 
-  function RoomExpandedContent(room) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div>
-          <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">
-            Room Detail
-          </p>
-          <p className="text-sm text-slate-800 font-medium">
-            {room.details?.[`room_detail_${lang}_name`] || "—"}
-          </p>
-          <p className="text-sm text-slate-500 mt-1">
-            {room.details?.[`room_detail_${lang}_detail`] || "—"}
-          </p>
-        </div>
+// ─── Main Component ───────────────────────────────────────────────────────────
 
-        <div>
-          <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">
-            Operating Info
-          </p>
-          <p className="text-sm text-slate-800">Price: ฿{Number(room.room_price).toLocaleString()}</p>
-          <p className="text-sm text-slate-500">Capacity: {room.room_capacity} คน</p>
-          <p className="text-sm text-slate-500">Available: {room.room_rooms} ห้อง</p>
-        </div>
+export default function RoomList() {
+  const [lang, setLang] = useState("th");
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingRoom, setEditingRoom] = useState(null);
 
-        <div>
-          <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">
-            Story Main 1
-          </p>
-          <p className="text-sm text-slate-800 font-medium">
-            {room.details?.[`room_detail_${lang}_storyMain1`] || "—"}
-          </p>
-          <p className="text-sm text-slate-500">
-            {room.details?.[`room_detail_${lang}_storySub1`] || ""}
-          </p>
-        </div>
+  const handleSuccess = () => {
+    setIsModalOpen(false);
+    setEditingRoom(null);
+    setRefreshKey((prev) => prev + 1);
+  };
 
-        <div>
-          <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">
-            Story Main 2
-          </p>
-          <p className="text-sm text-slate-800 font-medium">
-            {room.details?.[`room_detail_${lang}_storyMain2`] || "—"}
-          </p>
-          <p className="text-sm text-slate-500">
-            {room.details?.[`room_detail_${lang}_storySub2`] || ""}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  const filterFn = useCallback(
-    (rows) => {
-      // สามารถเพิ่มการกรองเพิ่มเติมได้ที่นี่ เช่น กรองตามราคา, สถานะ
-      return rows;
-    },
-    [lang]
-  );
+  const filterFn = useCallback((rows) => rows, [lang]);
 
   const extraFilters = useCallback(
     () => (
       <div className="relative flex-shrink-0 w-40">
         <Filter className="absolute left-2.5 top-1.5 text-slate-400" size={15} />
-        <select
-          value={lang}
-          onChange={(e) => {
-            setLang(e.target.value);
-            setRefreshKey((prev) => prev + 1); // refresh เพื่อโหลดข้อมูลภาษาใหม่
-          }}
-          className="w-full pl-8 pr-3 py-0.5 border border-slate-200 rounded-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 appearance-none cursor-pointer bg-slate-50/50 text-sm transition-colors text-slate-600"
-        >
+        <select value={lang}
+          onChange={(e) => { setLang(e.target.value); setRefreshKey((prev) => prev + 1); }}
+          className="w-full pl-8 pr-3 py-0.5 border border-slate-200 rounded-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 appearance-none cursor-pointer bg-slate-50/50 text-sm transition-colors text-slate-600">
           <option value="th">ภาษาไทย (TH)</option>
           <option value="en">English (EN)</option>
           <option value="cn">中文 (CN)</option>
@@ -172,15 +196,17 @@ export default function RoomList() {
         <ChevronDown className="absolute right-2.5 top-2 text-slate-400 pointer-events-none" size={15} />
       </div>
     ),
-    [lang]
+    [lang],
   );
 
   const MENU_CONFIG = {
-    apiPath: apiPath, // เปลี่ยนไปตามภาษา เช่น /room/th
+    apiPath: `/room/${lang}`,
     entityKey: "room_id",
-    columns: COLUMNS,
-    searchFields: SEARCH_FIELDS,
-    expandedContent: RoomExpandedContent,
+    columns: makeColumns(lang),
+    searchFields: ["room_id", "details.room_detail_name"],
+    expandedContent: makeRoomExpandedContent(lang),      // ← layout ของ Room
+    title: (room) => room.details?.[`room_detail_${lang}_name`] || room.room_id,
+    subtitle: (room) => `฿${Number(room.room_price).toLocaleString()} · ${room.room_capacity} คน`,
     addButtonLabel: "+ Add Room",
     loadingText: "Loading Room data...",
     emptyText: "No Rooms found",
@@ -196,7 +222,6 @@ export default function RoomList() {
       {isModalOpen && (
         <CreateRoom onClose={() => setIsModalOpen(false)} onSuccess={handleSuccess} />
       )}
-
       {editingRoom && (
         <EditRoom room={editingRoom} onClose={() => setEditingRoom(null)} onSuccess={handleSuccess} />
       )}

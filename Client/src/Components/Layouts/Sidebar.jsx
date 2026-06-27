@@ -38,10 +38,10 @@ const menuItems = [
     href: "/Department/list",
   },
   {
-    id: "rooms", // แก้ id ให้ตรงกับ label
+    id: "room",
     icon: <BedDouble size={18} />, 
-    label: "Rooms",
-    href: "/Rooms/List",
+    label: "Room",
+    href: "/Room/List",
   },
 ];
 
