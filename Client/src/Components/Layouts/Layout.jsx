@@ -28,7 +28,7 @@ export function Layout({ children }) {
             isCollapsed ? "lg:pl-16" : "lg:pl-40"
           }`}
         >
-          <div className="p-2 md:p-2 flex-1 min-h-0 flex flex-col overflow-hidden">
+          <div className="p-2 md:p-2 flex-1 min-h-0 flex flex-col overflow-y-hidden">
             {children}
           </div>
         </main>

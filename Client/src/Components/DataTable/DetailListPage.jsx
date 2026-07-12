@@ -169,7 +169,7 @@ export default function DataListPage({ config }) {
   // ── Compose 4 sections ─────────────────────────────────────
   return (
     <Layout>
-      <div className="flex flex-col gap-2 h-full overflow-hidden">
+      <div className="flex flex-col gap-2 h-full overflow-y-hidden">
 
         {/* ── Section 1 : Toolbar ───────────────────────── */}
         <Toolbar
@@ -194,7 +194,7 @@ export default function DataListPage({ config }) {
         />
 
         {/* ── Section 3 + 4 share one white card ────────── */}
-        <div className="bg-white rounded-sm border border-slate-200 overflow-hidden flex-1 min-h-0 flex flex-col">
+        <div className="bg-white rounded-sm border border-slate-200 flex-1 min-h-0 flex flex-col">
 
           {/* Section 3 : Table */}
           <DataTable

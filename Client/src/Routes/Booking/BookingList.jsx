@@ -1,11 +1,12 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import {
   Mail, Phone, CalendarDays, FileText, Hash,
-  User, Users, Dog, CreditCard, ClipboardList,
+  User, Users, Dog, CreditCard, ClipboardList, Check, X,
 } from "lucide-react";
 import DataListPage from "../../Components/DataTable/DetailListPage";
 import CreateBooking from "./CreateBooking";
 import EditBooking from "./EditBooking";
+import { API_URL } from "../../variable";
 
 function InfoRow({ icon, label, value, mono = false }) {
   if (value === null || value === undefined || value === "") return null;
@@ -84,9 +85,101 @@ function BookingExpandedContent(b) {
   );
 }
 
+const formatDate = (dateStr) => {
+  if (!dateStr) return "—";
+  const d = new Date(dateStr);
+  return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
+};
+
 const SEARCH_FIELDS = ["booking_id", "room_id", "booking_name", "booking_email", "booking_phone", "confirm_id"];
 
-const COLUMNS = [
+function ConfirmButton({ booking, onRequestConfirm }) {
+  if (booking.confirm_id) {
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-700 text-[11px] font-semibold">
+        <Check size={12} /> Confirmed
+      </span>
+    );
+  }
+  return (
+    <button
+      onClick={() => onRequestConfirm(booking)}
+      className="px-3 py-1.5 rounded-md bg-green-600 hover:bg-green-700 text-white text-[11px] font-semibold transition-colors"
+    >
+      Confirm
+    </button>
+  );
+}
+
+function ConfirmDialog({ booking, onConfirm, onCancel }) {
+  const [loading, setLoading] = useState(false);
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="bg-white rounded-xl shadow-xl w-[380px] p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-base font-bold text-slate-800">Confirm Check-In</h3>
+          <button onClick={onCancel} className="text-slate-400 hover:text-slate-600">
+            <X size={18} />
+          </button>
+        </div>
+        <p className="text-sm text-slate-600 mb-4">
+          Are you sure you want to confirm check-in for this booking?
+        </p>
+        <div className="bg-slate-50 rounded-lg p-3 mb-5 space-y-1 text-sm">
+          <div><span className="font-semibold text-slate-500">Name:</span> {booking.booking_name}</div>
+          <div><span className="font-semibold text-slate-500">Room:</span> {booking.room_name_th || booking.room_id}</div>
+          <div><span className="font-semibold text-slate-500">Check-in:</span> {formatDate(booking.booking_checkin)}</div>
+          <div><span className="font-semibold text-slate-500">Check-out:</span> {formatDate(booking.booking_checkout)}</div>
+        </div>
+        <div className="flex gap-2 justify-end">
+          <button onClick={onCancel} className="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors">
+            Cancel
+          </button>
+          <button
+            onClick={async () => {
+              setLoading(true);
+              try { await onConfirm(booking); } finally { setLoading(false); }
+            }}
+            disabled={loading}
+            className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white text-sm font-semibold transition-colors"
+          >
+            {loading ? "Confirming..." : "Confirm"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function BookingList() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingBooking, setEditingBooking] = useState(null);
+  const [confirmBooking, setConfirmBooking] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleConfirm = async (booking) => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`${API_URL}/booking/${booking.booking_id}`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ confirm_id: `CNF-${Date.now()}` }),
+      });
+      if (!res.ok) throw new Error("Confirm failed");
+      setConfirmBooking(null);
+      setRefreshKey((prev) => prev + 1);
+    } catch (e) {
+      alert("Failed to confirm: " + e.message);
+    }
+  };
+
+  const handleSuccess = () => {
+    setIsModalOpen(false);
+    setEditingBooking(null);
+    setRefreshKey((prev) => prev + 1);
+  };
+
+  const COLUMNS = [
   {
     header: "Booking",
     cell: (b) => (
@@ -102,9 +195,24 @@ const COLUMNS = [
     ),
   },
   {
-    header: "Room",
+    header: "Room Name",
     cell: (b) => (
-      <div className="font-medium text-slate-800 text-xs">{b.room_id}</div>
+      <div className="text-xs leading-relaxed">
+        <div className="text-slate-700">
+          <span className="font-semibold text-slate-500">TH:</span> {b.room_name_th || b.room_id}
+        </div>
+        <div className="text-slate-700">
+          <span className="font-semibold text-slate-500">EN:</span> {b.room_name_en || b.room_id}
+        </div>
+      </div>
+    ),
+  },
+  {
+    header: "Price",
+    cell: (b) => (
+      <div className="font-medium text-slate-800 text-xs text-right">
+        {b.room_price ? `${Number(b.room_price).toLocaleString()} ฿` : "—"}
+      </div>
     ),
   },
   {
@@ -121,57 +229,67 @@ const COLUMNS = [
   {
     header: "Guests",
     cell: (b) => (
-      <div className="flex items-center gap-1">
-        <Users size={13} className="text-slate-400" />
-        <span className="text-xs font-medium text-slate-700">
-          {(b.booking_adults || 0) + (b.booking_children_free || 0) + (b.booking_children_addon || 0)}
-        </span>
+      <div className="text-xs leading-relaxed">
+        <div className="text-slate-700 flex gap-1">
+          <span className="font-semibold text-slate-500 w-[10.5ch] shrink-0 text-left">Adult:</span>
+          <span>{b.booking_adults || 0}</span>
+        </div>
+        <div className="text-slate-700 flex gap-1">
+          <span className="font-semibold text-slate-500 w-[10.5ch] shrink-0 text-left">C (0-5):</span>
+          <span>{b.booking_children_free || 0}</span>
+        </div>
+        <div className="text-slate-700 flex gap-1">
+          <span className="font-semibold text-slate-500 w-[10.5ch] shrink-0 text-left">C (&gt;5):</span>
+          <span>{b.booking_children_addon || 0}</span>
+        </div>
       </div>
     ),
   },
   {
     header: "Pets",
     cell: (b) => (
-      <div className="flex items-center gap-1">
-        <Dog size={13} className="text-slate-400" />
-        <span className="text-xs text-slate-600">
-          {(b.booking_pet_free || 0) + (b.booking_pet_addon || 0)}
-        </span>
+      <div className="text-xs leading-relaxed">
+        <div className="text-slate-700 flex gap-1">
+          <span className="font-semibold text-slate-500 w-[6.0ch] shrink-0 text-left">Free:</span>
+          <span>{b.booking_pet_free || 0}</span>
+        </div>
+        <div className="text-slate-700 flex gap-1">
+          <span className="font-semibold text-slate-500 w-[6.0ch] shrink-0 text-left">Add On:</span>
+          <span>{b.booking_pet_addon || 0}</span>
+        </div>
       </div>
     ),
   },
   {
-    header: "Check-In",
+    header: "Check IN-Out",
     headerClassName: "hidden lg:table-cell",
     className: "hidden lg:table-cell",
     cell: (b) => (
-      <div className="text-xs text-slate-600">
-        {b.booking_checkin ? new Date(b.booking_checkin).toLocaleDateString("th-TH") : "—"}
+      <div className="text-xs leading-relaxed">
+        <div className="text-slate-700 flex gap-1">
+          <span className="font-semibold text-slate-500 w-[2.5ch] shrink-0 text-left">CI:</span>
+          <span>{formatDate(b.booking_checkin)}</span>
+        </div>
+        <div className="text-slate-700 flex gap-1">
+          <span className="font-semibold text-slate-500 w-[2.5ch] shrink-0 text-left">CO:</span>
+          <span>{formatDate(b.booking_checkout)}</span>
+        </div>
       </div>
     ),
   },
   {
-    header: "Check-Out",
-    headerClassName: "hidden lg:table-cell",
-    className: "hidden lg:table-cell",
+    header: "Note",
     cell: (b) => (
-      <div className="text-xs text-slate-600">
-        {b.booking_checkout ? new Date(b.booking_checkout).toLocaleDateString("th-TH") : "—"}
+      <div className="text-xs text-slate-600 max-w-[180px] truncate" title={b.booking_detail}>
+        {b.booking_detail || "—"}
       </div>
     ),
+  },
+  {
+    header: "",
+    cell: (b) => <ConfirmButton booking={b} onRequestConfirm={setConfirmBooking} />,
   },
 ];
-
-export default function BookingList() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingBooking, setEditingBooking] = useState(null);
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  const handleSuccess = () => {
-    setIsModalOpen(false);
-    setEditingBooking(null);
-    setRefreshKey((prev) => prev + 1);
-  };
 
   const MENU_CONFIG = {
     apiPath: "/booking",
@@ -197,6 +315,13 @@ export default function BookingList() {
       )}
       {editingBooking && (
         <EditBooking booking={editingBooking} onClose={() => setEditingBooking(null)} onSuccess={handleSuccess} />
+      )}
+      {confirmBooking && (
+        <ConfirmDialog
+          booking={confirmBooking}
+          onConfirm={handleConfirm}
+          onCancel={() => setConfirmBooking(null)}
+        />
       )}
     </>
   );

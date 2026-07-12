@@ -4,12 +4,39 @@ const supabase = require('../../db');
 
 router.get('/', async (req, res) => {
   try {
-    const { data, error } = await supabase
+    const { data: bookings, error } = await supabase
       .from('booking_tbls')
       .select('*')
       .order('booking_checkin', { ascending: false });
     if (error) throw error;
-    res.json(data || []);
+
+    const roomIds = [...new Set((bookings || []).map(b => b.room_id).filter(Boolean))];
+    const roomNameMap = {};
+
+    const roomNameMapTH = {};
+    const roomNameMapEN = {};
+    const roomPriceMap = {};
+
+    if (roomIds.length > 0) {
+      const { data: rooms } = await supabase
+        .from('room_tbls')
+        .select('room_id, room_price, room_detail_th_tbls(room_detail_th_name), room_detail_en_tbls(room_detail_en_name)')
+        .in('room_id', roomIds);
+
+      (rooms || []).forEach(r => {
+        roomNameMapTH[r.room_id] = r.room_detail_th_tbls?.room_detail_th_name || r.room_id;
+        roomNameMapEN[r.room_id] = r.room_detail_en_tbls?.room_detail_en_name || r.room_id;
+        roomPriceMap[r.room_id] = r.room_price;
+      });
+    }
+
+    const result = (bookings || []).map(b => ({
+      ...b,
+      room_name_th: roomNameMapTH[b.room_id] || b.room_id,
+      room_name_en: roomNameMapEN[b.room_id] || b.room_id,
+      room_price: roomPriceMap[b.room_id],
+    }));
+    res.json(result);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
