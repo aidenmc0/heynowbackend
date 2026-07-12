@@ -5,7 +5,8 @@ import {
   ShieldCheck,
   Users,
   Building2,
-  BedDouble,       
+  BedDouble,
+  Calendar,       
   ChevronsRight,
   ChevronsLeft,
   User,
@@ -42,6 +43,12 @@ const menuItems = [
     icon: <BedDouble size={18} />, 
     label: "Room",
     href: "/Room/List",
+  },
+  {
+    id: "booking",
+    icon: <Calendar size={18} />,
+    label: "Booking",
+    href: "/Booking/list",
   },
 ];
 

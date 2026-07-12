@@ -52,6 +52,9 @@ function App() {
         <Route path="/department/list" element={<PrivateRoute> <DepartmentList /> </PrivateRoute>} />
 
         {/* Booking */}
+        <Route path="/Booking" element={<Navigate to="/booking/list" replace />} />
+        <Route path="/Booking/list" element={<PrivateRoute> <BookingList /> </PrivateRoute>} />
+        <Route path="/Booking/create" element={<PrivateRoute> <CreateBooking /> </PrivateRoute>} />
         <Route path="/booking/list" element={<PrivateRoute> <BookingList /> </PrivateRoute>} />
         <Route path="/booking/create" element={<PrivateRoute> <CreateBooking /> </PrivateRoute>} />
 
