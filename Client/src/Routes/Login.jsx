@@ -46,24 +46,29 @@ export default function Login() {
       localStorage.setItem("token", data.token);
       localStorage.setItem("employee", JSON.stringify(data.employee));
 
-      // ── Step 2: Fetch Full Profile ───────────────────────
-      const profileRes = await fetch(`${API_URL}/employee/${data.employee.emp_code}`, {
-        headers: {
-          Authorization: `Bearer ${data.token}`,
-          "Content-Type": "application/json",
-        },
-        cache: "no-cache",
-      });
+      // move to dashboard ก่อน (ไม่ต้องรอ profile fetch)
+      navigate("/");
 
-      if (profileRes.ok) {
-        const profileJson = await profileRes.json();
-        const profileData = profileJson.data || profileJson;
-        localStorage.setItem("employeeProfile", JSON.stringify(profileData));
-      } else {
+      // ── Step 2: Fetch Full Profile (background — ไม่ blocking) ──
+      try {
+        const profileRes = await fetch(`${API_URL}/employee/${data.employee.emp_code}`, {
+          headers: {
+            Authorization: `Bearer ${data.token}`,
+            "Content-Type": "application/json",
+          },
+          cache: "no-cache",
+        });
+
+        if (profileRes.ok) {
+          const profileJson = await profileRes.json();
+          const profileData = profileJson.data || profileJson;
+          localStorage.setItem("employeeProfile", JSON.stringify(profileData));
+        } else {
+          localStorage.setItem("employeeProfile", JSON.stringify(data.employee));
+        }
+      } catch {
         localStorage.setItem("employeeProfile", JSON.stringify(data.employee));
       }
-
-      navigate("/");
 
     } catch (err) {
       setError(err.message);

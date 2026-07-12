@@ -5,7 +5,12 @@ const errorHandler = require('./Middlewares/errorHandler')
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: true,           // Reflect the requesting origin (allow any)
+  credentials: true,      // Allow cookies/auth headers
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
 app.use(express.json());
 
 // ✅ Serve static files (สำหรับ uploaded images)
@@ -16,6 +21,7 @@ app.use('/auth',        require('./Routes/Auth/route'));
 app.use('/employee',    require('./Routes/Employee/route'));
 app.use('/department',    require('./Routes/Department/route'));
 app.use('/room',    require('./Routes/Room/route'));
+app.use('/booking', require('./Routes/Booking/route'));
 
 // Global error handler (ต้องอยู่ท้ายสุดเสมอ)
 app.use(errorHandler);

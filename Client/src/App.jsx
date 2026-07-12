@@ -10,6 +10,9 @@ import CreateRoom from "./Routes/Room/CreateRoom";
 
 import DepartmentList from "./Routes/Department/DepartmentList";
 
+import BookingList from "./Routes/Booking/BookingList"
+import CreateBooking from "./Routes/Booking/CreateBooking";
+
 const isAuthenticated = () => !!localStorage.getItem("token");
 
 const PrivateRoute = ({ children }) => {
@@ -47,6 +50,10 @@ function App() {
 
         {/* Department */}
         <Route path="/department/list" element={<PrivateRoute> <DepartmentList /> </PrivateRoute>} />
+
+        {/* Booking */}
+        <Route path="/booking/list" element={<PrivateRoute> <BookingList /> </PrivateRoute>} />
+        <Route path="/booking/create" element={<PrivateRoute> <CreateBooking /> </PrivateRoute>} />
 
         {/* fallback */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
