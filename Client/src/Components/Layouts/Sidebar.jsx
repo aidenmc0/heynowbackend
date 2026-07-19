@@ -18,37 +18,37 @@ const menuItems = [
     id: "dashboard",
     icon: <LayoutDashboard size={18} />, 
     label: "Dashboard",
-    href: "/Dashboard",
+    href: "/admin/dashboard",
   },
   {
     id: "access",
     icon: <ShieldCheck size={18} />,
     label: "Access",
-    href: "/Access/list",
+    href: "/admin/access/list",
   },
   {
     id: "employee",
     icon: <Users size={18} />,
     label: "Employee",
-    href: "/Employee/list",
+    href: "/admin/employee/list",
   },
   {
     id: "department",
     icon: <Building2 size={18} />,
     label: "Department",
-    href: "/Department/list",
+    href: "/admin/department/list",
   },
   {
     id: "room",
     icon: <BedDouble size={18} />, 
     label: "Room",
-    href: "/Room/List",
+    href: "/admin/room/list",
   },
   {
     id: "booking",
     icon: <Calendar size={18} />,
     label: "Booking",
-    href: "/Booking/list",
+    href: "/admin/booking/list",
   },
 ];
 
@@ -70,7 +70,7 @@ export function Sidebar({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) {
     localStorage.removeItem("employeeProfile");    
     localStorage.removeItem("sidebarCollapsed");
     
-    navigate("/login");
+    navigate("/admin/login");
   };
 
   return (

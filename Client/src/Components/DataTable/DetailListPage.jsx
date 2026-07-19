@@ -96,7 +96,7 @@ export default function DataListPage({ config }) {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      navigate("/login", { replace: true });
+      navigate("/admin/login", { replace: true });
       return;
     }
 

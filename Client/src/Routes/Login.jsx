@@ -47,7 +47,7 @@ export default function Login() {
       localStorage.setItem("employee", JSON.stringify(data.employee));
 
       // move to dashboard ก่อน (ไม่ต้องรอ profile fetch)
-      navigate("/");
+      navigate("/admin");
 
       // ── Step 2: Fetch Full Profile (background — ไม่ blocking) ──
       try {
