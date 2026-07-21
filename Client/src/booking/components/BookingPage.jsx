@@ -126,6 +126,7 @@ function BookingPage() {
             nameTh: d.room_detail_th_name || dbId,
             img: ROOM_IMG[dbId] || "",
             desc: d.room_detail_en_detail || "",
+            capacity: dbRoom?.room_capacity || 4,
           };
         });
         setRooms(mapped);
@@ -176,7 +177,7 @@ function BookingPage() {
         const map = {};
         for (const b of data) {
           const dates = getDatesBetween(b.booking_checkin, b.booking_checkout);
-          const ids = [b.room_id, CONTENT_TO_DB[b.room_id], DB_TO_CONTENT[b.room_id]].filter(Boolean);
+          const ids = [b.room_id, DB_TO_CONTENT[b.room_id]].filter(Boolean);
           for (const id of ids) {
             const key = String(id);
             if (!map[key]) map[key] = new Set();
@@ -228,7 +229,7 @@ function BookingPage() {
       const ds = formatDate(cur.getFullYear(), cur.getMonth(), cur.getDate());
       if (ds > checkin) {
         const rangeDates = getDatesBetween(checkin, ds);
-        const ok = ROOMS.some((r) => {
+        const ok = rooms.some((r) => {
           if (!rangeDates.every((d) => hasPriceForDate(r.id, d))) return false;
           const roomBooked = new Set();
           for (const id of [String(r.id), CONTENT_TO_DB[r.id]].filter(Boolean)) {
@@ -242,14 +243,14 @@ function BookingPage() {
       cur.setDate(cur.getDate() + 1);
     }
     return map;
-  }, [checkin, bookedMap, calYear, calMonth, priceExistsMap]);
+  }, [checkin, bookedMap, calYear, calMonth, priceExistsMap, rooms]);
 
   // ── Rooms available on selected range (with prices) ──
   const availableRooms = useMemo(() => {
     if (!checkin) return [];
     const endCheck = checkout || checkin;
     const rangeDates = getDatesBetween(checkin, endCheck);
-    return ROOMS.filter((r) => {
+    return (rooms || []).filter((r) => {
       if (!rangeDates.every((d) => hasPriceForDate(r.id, d))) return false;
       const roomBooked = new Set();
       for (const id of [String(r.id), CONTENT_TO_DB[r.id]].filter(Boolean)) {
@@ -258,14 +259,14 @@ function BookingPage() {
       }
       return rangeDates.every((d) => !roomBooked.has(d));
     });
-  }, [checkin, checkout, bookedMap, priceExistsMap]);
+  }, [checkin, checkout, bookedMap, priceExistsMap, rooms]);
 
   // ── Rooms with no prices set for the selected range ──
   const unPricedRooms = useMemo(() => {
     if (!checkin) return [];
     const endCheck = checkout || checkin;
     const rangeDates = getDatesBetween(checkin, endCheck);
-    return ROOMS.filter((r) => {
+    return (rooms || []).filter((r) => {
       const isBooked = (() => {
         const roomBooked = new Set();
         for (const id of [String(r.id), CONTENT_TO_DB[r.id]].filter(Boolean)) {
@@ -277,11 +278,13 @@ function BookingPage() {
       if (isBooked) return false;
       return !rangeDates.every((d) => hasPriceForDate(r.id, d));
     });
-  }, [checkin, checkout, bookedMap, priceExistsMap]);
+  }, [checkin, checkout, bookedMap, priceExistsMap, rooms]);
 
   const nights = nightsBetween(checkin, checkout);
   const roomPrice = selectedRoom ? (roomPrices[selectedRoom.id] || 0) : 0;
-  const totalPrice = roomPrice * (nights || 1);
+  const extraAdultPerNight = Math.max(0, (selectedRoom ? form.adults : 2) - 2) * 500;
+  const childrenAddonPerNight = form.childrenAddon * 300;
+  const totalPrice = (roomPrice + extraAdultPerNight + childrenAddonPerNight) * (nights || 1);
 
   // ── Compute per-room nightly price from allPriceData ──
   useEffect(() => {
@@ -299,7 +302,7 @@ function BookingPage() {
     const end = checkout || checkin;
     const dates = getDatesBetween(checkin, end);
     const roomTotals = {};
-    for (const room of ROOMS) {
+    for (const room of (rooms || ROOMS)) {
       let total = 0;
       for (const ds of dates) {
         const d = new Date(ds);
@@ -337,7 +340,7 @@ function BookingPage() {
     } else {
       if (checkoutValidMap[dateStr] === false) return;
       const range = getDatesBetween(checkin, dateStr);
-      const allAvailable = ROOMS.filter((r) => {
+      const allAvailable = (rooms || []).filter((r) => {
         const roomBooked = new Set();
         for (const id of [String(r.id), CONTENT_TO_DB[r.id]].filter(Boolean)) {
           const s = bookedMap[id];
@@ -352,7 +355,7 @@ function BookingPage() {
       setCheckout(dateStr);
       setError(null);
     }
-  }, [checkin, checkout, bookedMap, checkoutValidMap, dailyAvailability, todayStr, setError]);
+  }, [checkin, checkout, bookedMap, checkoutValidMap, dailyAvailability, todayStr, setError, rooms]);
 
   // ── Slip handling ──
   const handleSlipChange = useCallback((e) => {
@@ -392,7 +395,7 @@ function BookingPage() {
     const nights = nightsBetween(checkin, checkout || checkin);
     const pricePerNight = (roomPrices[selectedRoom.id] || 0);
     const body = {
-      room_id: String(selectedRoom.id),
+      room_id: selectedRoom.dbId,
       booking_name: form.name,
       booking_email: form.email,
       booking_phone: form.phone,
@@ -403,7 +406,7 @@ function BookingPage() {
       booking_pet_addon: 0,
       booking_checkin: checkin,
       booking_checkout: checkout || checkin,
-      booking_price: nights * pricePerNight,
+      booking_price: ((nights * pricePerNight) + (Math.max(0, form.adults - 2) * 500 * (nights || 1)) + (form.childrenAddon * 300 * (nights || 1))) / 2,
       booking_detail: form.detail || "",
     };
 
@@ -429,25 +432,141 @@ function BookingPage() {
     }
   };
 
+  function InfoItem({ label, value, className = "" }) {
+    return (
+      <div className={`flex justify-between sm:flex-col sm:gap-0 ${className}`}>
+        <span className="text-[11px] text-slate-400">{label}</span>
+        <span className="text-xs sm:text-sm font-medium text-slate-800">{value}</span>
+      </div>
+    );
+  }
+
+  function PriceRow({ label, value }) {
+    return (
+      <div className="flex justify-between text-xs sm:text-sm">
+        <span className="text-slate-500">{label}</span>
+        <span className="font-medium text-slate-800">{value}</span>
+      </div>
+    );
+  }
+
   // ── RENDER ──
 
   if (success) {
+    const depositAmount = totalPrice / 2;
     return (
-      <div className="min-h-screen bg-gradient-to-b from-warm-50 to-white flex items-center justify-center px-6">
-        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center max-w-md">
-          <div className="w-20 h-20 rounded-full bg-forest-600 mx-auto flex items-center justify-center mb-6 shadow-lg">
-            <Check size={40} className="text-white" />
+      <div className="min-h-screen bg-warm-50 flex flex-col items-center justify-center px-4 py-4 sm:py-6">
+        <div id="booking-ticket" className="w-full max-w-lg bg-white rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden border border-warm-200">
+
+          {/* Header */}
+          <div className="bg-gradient-to-r from-forest-700 to-forest-600 text-white px-5 sm:px-7 py-4 sm:py-5 text-center relative">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/15 flex items-center justify-center mx-auto mb-2 backdrop-blur-sm">
+              <Check size={24} className="text-white" />
+            </div>
+            <h2 className="font-serif text-xl sm:text-2xl">Booking Confirmed</h2>
+            <p className="text-white/70 text-xs sm:text-sm mt-0.5">Hey Now Chiang Dao Stay</p>
+            <div className="absolute -bottom-2.5 left-0 right-0 flex justify-between px-4 sm:px-6">
+              <span className="w-5 h-5 rounded-full bg-warm-50" />
+              <span className="w-5 h-5 rounded-full bg-warm-50" />
+            </div>
           </div>
-          <h2 className="font-serif text-3xl text-warm-900 mb-3">Thank You!</h2>
-          <p className="text-warm-600 mb-2">Booking reference: <span className="font-mono font-bold text-forest-700">{bookingId}</span></p>
-          <p className="text-warm-600 mb-8 leading-relaxed">
-            Your reservation request has been received. Our team will verify availability and contact you within 24 hours.
-            {slipFile && " We've received your payment slip and will confirm shortly."}
-          </p>
-          <button onClick={() => navigate("/")} className="inline-block bg-forest-600 text-white px-8 py-3 rounded-full text-sm tracking-widest uppercase hover:bg-forest-700 transition-all shadow-md">
-            Back to Home
+
+          <div className="px-5 sm:px-8 py-5 sm:py-6 space-y-4 sm:space-y-5">
+            {/* Booking ID */}
+            <div className="text-center">
+              <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-warm-400 font-semibold">Booking Reference</p>
+              <p className="font-mono font-bold text-lg sm:text-xl text-forest-700">{bookingId}</p>
+            </div>
+
+            {/* Room */}
+            <div className="flex items-center gap-4 bg-warm-50 rounded-2xl p-4">
+              <img src={selectedRoom?.img} alt={selectedRoom?.name} className="w-20 h-20 rounded-xl object-cover shadow-sm" />
+              <div>
+                <p className="font-serif text-lg text-warm-900">{selectedRoom?.name}</p>
+                <p className="text-warm-500 text-sm">{selectedRoom?.desc}</p>
+              </div>
+            </div>
+
+            {/* Dates */}
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+              <div className="bg-warm-50 rounded-xl p-3 sm:p-3.5 text-center">
+                <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.15em] text-warm-400 font-semibold">Check-in</p>
+                <p className="font-bold text-sm sm:text-base text-warm-900 mt-0.5">{checkin}</p>
+              </div>
+              <div className="bg-warm-50 rounded-xl p-3 sm:p-3.5 text-center">
+                <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.15em] text-warm-400 font-semibold">Check-out</p>
+                <p className="font-bold text-sm sm:text-base text-warm-900 mt-0.5">{checkout || checkin}</p>
+              </div>
+            </div>
+
+            {/* Guest */}
+            <div className="bg-warm-50 rounded-xl p-3.5 sm:p-4 space-y-2">
+              <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-warm-400 font-semibold">Guest Details</p>
+              <div className="space-y-2">
+                <InfoItem label="Name" value={form.name} />
+                <InfoItem label="Phone" value={form.phone} />
+                {form.email && <InfoItem label="Email" value={form.email} />}
+              </div>
+              <div className="pt-1.5 border-t border-warm-200/60">
+                <p className="text-xs sm:text-sm text-warm-700">
+                  <span className="font-medium">{form.adults}</span> Adult{form.adults > 1 ? "s" : ""}
+                  {form.childrenFree + form.childrenAddon > 0 && <>
+                    <span className="text-warm-300 mx-1.5">·</span>
+                    <span className="font-medium">{form.childrenFree + form.childrenAddon}</span> Child{form.childrenFree + form.childrenAddon > 1 ? "ren" : ""}
+                  </>}
+                  {form.petsFree > 0 && <>
+                    <span className="text-warm-300 mx-1.5">·</span>
+                    <span className="font-medium">{form.petsFree}</span> Pet{form.petsFree > 1 ? "s" : ""}
+                  </>}
+                </p>
+              </div>
+            </div>
+
+            {/* Price */}
+            <div className="bg-warm-50 rounded-xl p-3.5 sm:p-4 space-y-1.5">
+              <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-warm-400 font-semibold">Payment Summary</p>
+              <PriceRow label={`Room (${roomPrice.toLocaleString()} ฿ × ${nights} night${nights > 1 ? "s" : ""})`} value={(roomPrice * nights).toLocaleString()} />
+              {extraAdultPerNight > 0 && (
+                <PriceRow label={`Extra adult × ${Math.max(0, form.adults - 2)}`} value={`${(Math.max(0, form.adults - 2) * 500 * nights).toLocaleString()} ฿`} />
+              )}
+              {childrenAddonPerNight > 0 && (
+                <PriceRow label={`Children (>5) × ${form.childrenAddon}`} value={`${(form.childrenAddon * 300 * nights).toLocaleString()} ฿`} />
+              )}
+              <div className="pt-1.5 border-t border-warm-200 space-y-1.5">
+                <PriceRow label="Total Amount" value={`${totalPrice.toLocaleString()} ฿`} />
+                <div className="flex items-center justify-between bg-forest-100/70 rounded-lg px-3 py-2 -mx-1">
+                  <span className="text-xs sm:text-sm font-bold text-forest-800">Deposit Paid (50%)</span>
+                  <span className="text-sm sm:text-base font-bold text-forest-700">{depositAmount.toLocaleString()} ฿</span>
+                </div>
+              </div>
+            </div>
+
+            {form.detail && (
+              <div className="bg-warm-50 rounded-xl p-3.5 sm:p-4">
+                <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-warm-400 font-semibold mb-1">Special Requests</p>
+                <p className="text-xs sm:text-sm text-warm-700 italic">"{form.detail}"</p>
+              </div>
+            )}
+
+            {/* Footer */}
+            <div className="text-center text-[9px] sm:text-[10px] text-warm-400 pt-2 border-t border-warm-200">
+              <p>Thank you for choosing Hey Now Chiang Dao Stay</p>
+              <p className="mt-0.5">If you have any questions, please contact us.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex flex-col sm:flex-row gap-3 mt-5 sm:mt-8 w-full max-w-xl">
+          <button onClick={() => window.print()}
+            className="flex-1 px-6 py-3.5 rounded-xl text-sm font-bold tracking-wider uppercase bg-forest-600 text-white hover:bg-forest-700 transition-all shadow-md flex items-center justify-center gap-2">
+            <FileText size={16} /> Download Ticket
           </button>
-        </motion.div>
+          <button onClick={() => navigate("/")}
+            className="flex-1 px-6 py-3.5 rounded-xl text-sm font-bold tracking-wider uppercase border border-warm-300 text-warm-700 hover:bg-warm-100 transition-all flex items-center justify-center gap-2">
+            <Home size={16} /> Back to Home
+          </button>
+        </div>
       </div>
     );
   }
@@ -460,6 +579,18 @@ function BookingPage() {
     { label: "Confirm", icon: Check },
   ];
 
+  const goToStep = (target) => {
+    if (target === step) return;
+    if (target < step) { setStep(target); return; }
+    if (step === 0 && checkin && checkout) setStep(1);
+    else if (step === 1 && selectedRoom) setStep(2);
+    else if (step === 2 && form.name && form.phone) setStep(3);
+    else if (step === 3) setStep(4);
+    else if (!checkin || !checkout) setError("Please select your dates first.");
+    else if (!selectedRoom) setError("Please select a room.");
+    else if (!form.name || !form.phone) setError("Please provide your name and phone number.");
+  };
+
   return (
     <div className="min-h-screen bg-warm-50">
       {/* ── Top Bar ── */}
@@ -470,18 +601,27 @@ function BookingPage() {
         <div className="flex items-center gap-2">
           {steps.map((s, i) => (
             <div key={s.label} className="flex items-center">
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold transition-all ${
-                i < step ? "bg-green-400 text-white" : i === step ? "bg-white text-warm-900" : "bg-white/20 text-white/50"
-              }`}>
+              <button
+                onClick={() => goToStep(i)}
+                disabled={i > step + 1}
+                className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold transition-all ${
+                  i < step ? "bg-green-400 text-white cursor-pointer hover:scale-110" 
+                    : i === step ? "bg-white text-warm-900" 
+                    : i === step + 1 ? "bg-white/30 text-white/70 hover:bg-white/40 cursor-pointer"
+                    : "bg-white/20 text-white/50 cursor-not-allowed"
+                }`}
+              >
                 {i < step ? <Check size={12} /> : i + 1}
-              </div>
+              </button>
               {i < steps.length - 1 && (
                 <div className={`w-4 h-[2px] mx-1 transition-all ${i < step ? "bg-green-400" : "bg-white/20"}`} />
               )}
             </div>
           ))}
         </div>
-        <div className="w-6" />
+        <div className="text-white/50 text-[11px] font-medium">
+          Step {step + 1} of {steps.length}
+        </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-6">
@@ -684,6 +824,7 @@ function BookingPage() {
 
         {/* ── STEP 2: Guest Info + Price Summary ── */}
         {step === 2 && selectedRoom && (
+          <div className="md:col-span-5">
           <div className="grid md:grid-cols-5 gap-6">
             {/* Left: Form - 3 cols */}
             <div className="md:col-span-3">
@@ -714,7 +855,7 @@ function BookingPage() {
                       <label className="block text-[10px] text-warm-500 mb-1">Adults</label>
                       <select value={form.adults} onChange={(e) => setForm({...form, adults: Number(e.target.value)})}
                         className="w-full border border-warm-200 rounded-xl px-3 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-forest-500/20">
-                        {[1,2,3,4,5,6].map(n => <option key={n} value={n}>{n}</option>)}
+                        {Array.from({length: selectedRoom?.capacity || 4}, (_, i) => i + 1).map(n => <option key={n} value={n}>{n}</option>)}
                       </select>
                     </div>
                     <div>
@@ -776,20 +917,32 @@ function BookingPage() {
                       <span className="font-medium text-warm-900">{nights || 1}</span>
                     </div>
                   </div>
-                  <div className="pt-3 border-t border-warm-100 space-y-2 text-sm">
-                    <div className="flex justify-between text-warm-600">
-                      <span>{roomPrice.toLocaleString()} ฿ × {nights || 1} night{(nights || 1) > 1 ? "s" : ""}</span>
-                      <span className="font-medium text-warm-900">{(roomPrice * (nights || 1)).toLocaleString()} ฿</span>
+                    <div className="pt-3 border-t border-warm-100 space-y-2 text-sm">
+                      <div className="flex justify-between text-warm-600">
+                        <span>{roomPrice.toLocaleString()} ฿ × {nights || 1} night{(nights || 1) > 1 ? "s" : ""}</span>
+                        <span className="font-medium text-warm-900">{(roomPrice * (nights || 1)).toLocaleString()} ฿</span>
+                      </div>
+                      {extraAdultPerNight > 0 && (
+                        <div className="flex justify-between text-warm-600">
+                          <span>Extra adult × {Math.max(0, form.adults - 2)} (500 ฿/night)</span>
+                          <span className="font-medium text-warm-900">+{((Math.max(0, form.adults - 2) * 500) * (nights || 1)).toLocaleString()} ฿</span>
+                        </div>
+                      )}
+                      {childrenAddonPerNight > 0 && (
+                        <div className="flex justify-between text-warm-600">
+                          <span>Children (&gt;5) × {form.childrenAddon} (300 ฿/night)</span>
+                          <span className="font-medium text-warm-900">+{(form.childrenAddon * 300 * (nights || 1)).toLocaleString()} ฿</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between text-warm-500 text-xs">
+                        <span>Service fee</span>
+                        <span>Included</span>
+                      </div>
+                      <div className="flex justify-between text-warm-500 text-xs">
+                        <span>Tax</span>
+                        <span>Included</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between text-warm-500 text-xs">
-                      <span>Service fee</span>
-                      <span>Included</span>
-                    </div>
-                    <div className="flex justify-between text-warm-500 text-xs">
-                      <span>Tax</span>
-                      <span>Included</span>
-                    </div>
-                  </div>
                   <div className="pt-3 border-t-2 border-warm-900">
                     <div className="flex justify-between items-baseline">
                       <span className="font-bold text-warm-900">Total</span>
@@ -810,10 +963,22 @@ function BookingPage() {
               </div>
             </div>
           </div>
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={() => goToStep(3)}
+              disabled={!form.name || !form.phone}
+              className={`px-8 py-3 rounded-full text-sm tracking-widest uppercase transition-all shadow-md flex items-center gap-2 ${
+                form.name && form.phone ? "bg-forest-600 text-white hover:bg-forest-700" : "bg-warm-200 text-warm-400 cursor-not-allowed"
+              }`}>
+              Continue <ChevronRight size={16} />
+            </button>
+          </div>
+        </div>
         )}
 
         {/* ── STEP 3: Upload Payment Slip ── */}
         {step === 3 && (
+          <div className="md:col-span-5">
           <div className="grid md:grid-cols-5 gap-6">
             <div className="md:col-span-3">
               <h2 className="font-serif text-2xl text-warm-900 mb-1">Payment (Optional)</h2>
@@ -878,9 +1043,27 @@ function BookingPage() {
                     <span>Nights</span>
                     <span className="font-medium text-warm-900">{nights || 1}</span>
                   </div>
-                  <div className="pt-2 border-t border-warm-100 flex justify-between font-bold text-warm-900">
-                    <span>Total</span>
-                    <span className="text-lg text-forest-700">{totalPrice.toLocaleString()} ฿</span>
+                  {extraAdultPerNight > 0 && (
+                    <div className="flex justify-between text-warm-600">
+                      <span>Extra adult × {Math.max(0, form.adults - 2)} (500 ฿/night)</span>
+                      <span className="font-medium text-warm-900">+{((Math.max(0, form.adults - 2) * 500) * (nights || 1)).toLocaleString()} ฿</span>
+                    </div>
+                  )}
+                  {childrenAddonPerNight > 0 && (
+                    <div className="flex justify-between text-warm-600">
+                      <span>Children (&gt;5) × {form.childrenAddon} (300 ฿/night)</span>
+                      <span className="font-medium text-warm-900">+{(form.childrenAddon * 300 * (nights || 1)).toLocaleString()} ฿</span>
+                    </div>
+                  )}
+                  <div className="pt-2 border-t border-warm-100 space-y-2">
+                    <div className="flex justify-between text-warm-600">
+                      <span>Total</span>
+                      <span className="font-medium text-warm-900">{totalPrice.toLocaleString()} ฿</span>
+                    </div>
+                    <div className="flex justify-between font-bold text-warm-900">
+                      <span>Deposit (50%)</span>
+                      <span className="text-lg text-forest-700">{(totalPrice / 2).toLocaleString()} ฿</span>
+                    </div>
                   </div>
                   <div className="pt-2 text-xs text-warm-400">
                     <p>Name: {form.name || "—"}</p>
@@ -891,6 +1074,13 @@ function BookingPage() {
               </div>
             </div>
           </div>
+          <div className="flex justify-center mt-6">
+            <button onClick={() => goToStep(4)}
+              className="px-8 py-3 rounded-full text-sm tracking-widest uppercase bg-forest-600 text-white hover:bg-forest-700 transition-all shadow-md flex items-center gap-2">
+              Review & Confirm <ChevronRight size={16} />
+            </button>
+          </div>
+        </div>
         )}
 
         {/* ── STEP 4: Confirm ── */}
@@ -950,45 +1140,17 @@ function BookingPage() {
           </div>
         )}
 
-        {/* ── Navigation Buttons ── */}
-        <div className="flex justify-between items-center mt-6 max-w-2xl mx-auto">
-          <button onClick={() => step > 0 ? setStep(step - 1) : navigate("/")}
-            className="px-6 py-3 rounded-full border border-warm-300 text-warm-700 text-sm hover:bg-warm-100 transition-all">
-            {step === 0 ? "Cancel" : "Back"}
-          </button>
-          <div className="text-xs text-warm-400">
-            Step {step + 1} of {steps.length}
-          </div>
-          {step < 4 ? (
-            <button
-              onClick={() => {
-                if (step === 0 && checkin && checkout) setStep(1);
-                else if (step === 1 && selectedRoom) setStep(2);
-                else if (step === 2 && form.name && form.phone) setStep(3);
-                else if (step === 3) setStep(4);
-                else if (!checkin || !checkout) setError("Please select your dates first.");
-                else if (!selectedRoom) setError("Please select a room.");
-                else if (!form.name || !form.phone) setError("Please provide your name and phone number.");
-              }}
-              className={`px-8 py-3 rounded-full text-sm tracking-widest uppercase transition-all shadow-md flex items-center gap-2 ${
-                (step === 0 && checkin && checkout) ||
-                (step === 1 && selectedRoom) ||
-                (step === 2 && form.name && form.phone) ||
-                step === 3
-                  ? "bg-forest-600 text-white hover:bg-forest-700"
-                  : "bg-warm-200 text-warm-400 cursor-not-allowed"
-              }`}>
-              Next <ChevronRight size={16} />
-            </button>
-          ) : (
+        {/* ── Step 4: Confirm Button ── */}
+        {step === 4 && (
+          <div className="flex justify-center mt-6 max-w-2xl mx-auto">
             <button onClick={handleSubmit} disabled={submitting || uploading}
-              className="px-8 py-3 rounded-full text-sm tracking-widest uppercase bg-forest-600 text-white hover:bg-forest-700 transition-all shadow-md disabled:opacity-50 flex items-center gap-2">
+              className="px-10 py-3 rounded-full text-sm tracking-widest uppercase bg-forest-600 text-white hover:bg-forest-700 transition-all shadow-md disabled:opacity-50 flex items-center gap-2">
               {submitting || uploading ? (
                 <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> {uploading ? "Uploading..." : "Booking..."}</>
               ) : "Confirm Booking"}
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

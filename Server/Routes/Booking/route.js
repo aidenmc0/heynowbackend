@@ -114,7 +114,6 @@ router.post('/', async (req, res) => {
       .from('booking_tbls')
       .select('booking_id, booking_checkin, booking_checkout')
       .eq('room_id', room_id)
-      .eq('deleteflag', 'N')
       .lt('booking_checkin', booking_checkout)
       .gt('booking_checkout', booking_checkin);
 

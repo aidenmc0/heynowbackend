@@ -11,16 +11,7 @@ const MONTHS = [
   "July", "August", "September", "October", "November", "December",
 ];
 
-const ROOMS = [
-  { id: "R001", name: "R001 — Phruay" },
-  { id: "R002", name: "R002 — Sirilanna" },
-  { id: "R003", name: "R003 — Daramanee" },
-  { id: "R004", name: "R004 — Ban Chuen" },
-  { id: "R005", name: "R005 — Leelawadee" },
-  { id: "R006", name: "R006 — Katria" },
-  { id: "R007", name: "R007 — Bungalow" },
-  { id: "R008", name: "R008 — Camping" },
-];
+const LANG = "en";
 
 const YEARS = () => {
   const y = new Date().getFullYear();
@@ -47,6 +38,9 @@ export default function PriceSetting() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  const [rooms, setRooms] = useState([]);
+  const [roomsLoading, setRoomsLoading] = useState(true);
 
   const [holidays, setHolidays] = useState([]);
   const [holidayDate, setHolidayDate] = useState("");
@@ -79,6 +73,20 @@ export default function PriceSetting() {
     } catch (e) {
       console.error(e);
     }
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch(`${API_URL}/room/${LANG}`, { headers: authHeaders });
+        const data = await res.json();
+        setRooms(data || []);
+      } catch (e) {
+        console.error("Failed to load rooms:", e);
+      } finally {
+        setRoomsLoading(false);
+      }
+    })();
   }, []);
 
   useEffect(() => { fetchPrices(selectedRoom, selectedYear); }, [selectedRoom, selectedYear, fetchPrices]);
@@ -216,9 +224,17 @@ export default function PriceSetting() {
                       className="w-full appearance-none pl-3 pr-7 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-medium text-slate-700
                         focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400 shadow-sm transition-all"
                     >
-                      {ROOMS.map((r) => (
-                        <option key={r.id} value={r.id}>{r.name}</option>
-                      ))}
+                      {roomsLoading ? (
+                        <option value="">Loading...</option>
+                      ) : rooms.length === 0 ? (
+                        <option value="">No rooms available</option>
+                      ) : (
+                        rooms.map((r) => (
+                          <option key={r.room_id} value={r.room_id}>
+                            {r.room_id} — {r.details?.[`room_detail_${LANG}_name`] || r.room_id}
+                          </option>
+                        ))
+                      )}
                     </select>
                     <ChevronDown size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                   </div>
