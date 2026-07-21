@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRESTIGE MOTORS | รถมือสองคุณภาพระดับพรีเมียม</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: {
+              50: '#FDFCFA',
+              100: '#FAF8F5',
+              200: '#F5F1EB',
+              300: '#EDE7DD',
+              400: '#E0D6C6',
+            },
+            gold: {
+              400: '#C9A962',
+              500: '#B8943E',
+              600: '#9A7B32',
+            },
+            charcoal: {
+              800: '#2A2A2A',
+              900: '#1A1A1A',
+              950: '#0F0F0F',
+            }
+          },
+          fontFamily: {
+            display: ['Cormorant Garamond', 'serif'],
+            body: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --bg: #FAF8F5;
+      --fg: #1A1A1A;
+      --muted: #8A8A8A;
+      --accent: #B8943E;
+      --card: #FFFFFF;
+      --border: #E5E0D8;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--fg);
+    }
+
+    .font-display {
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-60px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .animate-fadeInUp {
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .animate-fadeIn {
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+
+    .animate-slideInLeft {
+      animation: slideInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .animate-scaleIn {
+      animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Stagger delays */
+    .delay-100 { animation-delay: 100ms; }
+    .delay-200 { animation-delay: 200ms; }
+    .delay-300 { animation-delay: 300ms; }
+    .delay-400 { animation-delay: 400ms; }
+    .delay-500 { animation-delay: 500ms; }
+    .delay-600 { animation-delay: 600ms; }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--muted);
+    }
+
+    /* Button hover effect */
+    .btn-primary {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(184, 148, 62, 0.3);
+    }
+
+    /* Card hover */
+    .car-card {
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .car-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+    }
+    .car-card:hover .car-image {
+      transform: scale(1.03);
+    }
+    .car-card .car-image {
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Nav link underline */
+    .nav-link {
+      position: relative;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    /* Focus states */
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      html {
+        scroll-behavior: auto;
+      }
+    }
+
+    /* Line clamp */
+    .line-clamp-1 {
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Hero gradient overlay */
+    .hero-overlay {
+      background: linear-gradient(135deg, rgba(250, 248, 245, 0.95) 0%, rgba(250, 248, 245, 0.7) 50%, rgba(250, 248, 245, 0.4) 100%);
+    }
+  </style>
+</head>
+<body class="bg-cream-100 text-charcoal-900 font-body antialiased">
+
+  <!-- Navigation -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <!-- Logo -->
+        <a href="#" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 border border-gold-500 flex items-center justify-center transition-all duration-300 group-hover:bg-gold-500">
+            <span class="font-display text-xl font-semibold text-gold-500 group-hover:text-white transition-colors">P</span>
+          </div>
+          <div class="hidden sm:block">
+            <span class="font-display text-xl font-semibold tracking-wide text-charcoal-900">PRESTIGE</span>
+            <span class="block text-[10px] tracking-[0.3em] text-muted uppercase -mt-1">Motors</span>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden lg:flex items-center gap-10">
+          <a href="#cars" class="nav-link text-sm font-medium text-charcoal-800 hover:text-gold-500 transition-colors">สินค้า</a>
+          <a href="#about" class="nav-link text-sm font-medium text-charcoal-800 hover:text-gold-500 transition-colors">เกี่ยวกับเรา</a>
+          <a href="#services" class="nav-link text-sm font-medium text-charcoal-800 hover:text-gold-500 transition-colors">บริการ</a>
+          <a href="#contact" class="nav-link text-sm font-medium text-charcoal-800 hover:text-gold-500 transition-colors">ติดต่อ</a>
+        </div>
+
+        <!-- CTA Buttons -->
+        <div class="hidden lg:flex items-center gap-4">
+          <a href="tel:0812345678" class="flex items-center gap-2 text-sm font-medium text-charcoal-800 hover:text-gold-500 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+            </svg>
+            <span>081-234-5678</span>
+          </a>
+          <button class="btn-primary bg-charcoal-900 text-cream-50 px-6 py-3 text-sm font-medium tracking-wide hover:bg-charcoal-800">
+            นัดหมายดูรถ
+          </button>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobileMenuBtn" class="lg:hidden p-2" aria-label="เปิดเมนู">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="lg:hidden fixed inset-0 bg-cream-100 z-50 translate-x-full transition-transform duration-500">
+      <div class="flex flex-col h-full">
+        <div class="flex items-center justify-between px-6 h-20 border-b border-cream-300">
+          <a href="#" class="flex items-center gap-3">
+            <div class="w-10 h-10 border border-gold-500 flex items-center justify-center">
+              <span class="font-display text-xl font-semibold text-gold-500">P</span>
+            </div>
+            <span class="font-display text-xl font-semibold">PRESTIGE</span>
+          </a>
+          <button id="closeMobileMenu" class="p-2" aria-label="ปิดเมนู">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        <div class="flex-1 flex flex-col justify-center px-6 gap-6">
+          <a href="#cars" class="mobile-nav-link text-3xl font-display font-medium">สินค้า</a>
+          <a href="#about" class="mobile-nav-link text-3xl font-display font-medium">เกี่ยวกับเรา</a>
+          <a href="#services" class="mobile-nav-link text-3xl font-display font-medium">บริการ</a>
+          <a href="#contact" class="mobile-nav-link text-3xl font-display font-medium">ติดต่อ</a>
+        </div>
+        <div class="p-6 border-t border-cream-300">
+          <a href="tel:0812345678" class="flex items-center gap-3 text-lg mb-4">
+            <svg class="w-5 h-5 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+            </svg>
+            <span>081-234-5678</span>
+          </a>
+          <button class="w-full btn-primary bg-charcoal-900 text-cream-50 py-4 font-medium tracking-wide">
+            นัดหมายดูรถ
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative min-h-screen flex items-center overflow-hidden">
+    <!-- Background Image -->
+    <div class="absolute inset-0">
+      <img 
+        src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1920&q=80" 
+        alt="Luxury car" 
+        class="w-full h-full object-cover"
+      >
+      <div class="hero-overlay absolute inset-0"></div>
+    </div>
+
+    <!-- Decorative Elements -->
+    <div class="absolute top-1/4 right-0 w-1 h-32 bg-gold-500 hidden lg:block"></div>
+    <div class="absolute bottom-1/4 left-0 w-1 h-32 bg-gold-500 hidden lg:block"></div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-32 lg:py-0">
+      <div class="max-w-3xl">
+        <!-- Badge -->
+        <div class="animate-fadeInUp opacity-0 inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 mb-8">
+          <span class="w-2 h-2 bg-gold-500 rounded-full"></span>
+          <span class="text-xs tracking-[0.2em] uppercase font-medium">Premium Used Cars</span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="animate-fadeInUp opacity-0 delay-100 font-display text-5xl md:text-6xl lg:text-7xl font-light leading-[1.1] mb-6">
+          รถยนต์พรีเมียม<br>
+          <span class="font-semibold text-gold-500">คัดสรรคุณภาพ</span>
+        </h1>
+
+        <!-- Subheadline -->
+        <p class="animate-fadeInUp opacity-0 delay-200 text-lg md:text-xl text-charcoal-800/80 font-light leading-relaxed mb-10 max-w-xl">
+          เราคัดสรรรถยนต์มือสองคุณภาพระดับพรีเมียม พร้อมรับประกันคุณภาพ ตรวจสอบโดยผู้เชี่ยวชาญ มั่นใจทุกการขับขี่
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="animate-fadeInUp opacity-0 delay-300 flex flex-col sm:flex-row gap-4">
+          <a href="#cars" class="btn-primary bg-charcoal-900 text-cream-50 px-8 py-4 text-sm font-medium tracking-widest uppercase text-center">
+            ดูรถยนต์ทั้งหมด
+          </a>
+          <a href="#contact" class="group flex items-center justify-center gap-2 px-8 py-4 border border-charcoal-900/20 hover:border-gold-500 transition-colors">
+            <span class="text-sm font-medium tracking-widest uppercase">ติดต่อเรา</span>
+            <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+          </a>
+        </div>
+
+        <!-- Stats -->
+        <div class="animate-fadeInUp opacity-0 delay-400 mt-16 pt-8 border-t border-charcoal-900/10">
+          <div class="grid grid-cols-3 gap-8">
+            <div>
+              <span class="font-display text-4xl md:text-5xl font-semibold text-gold-500">500+</span>
+              <p class="text-sm text-charcoal-800/60 mt-1">คันขายแล้ว</p>
+            </div>
+            <div>
+              <span class="font-display text-4xl md:text-5xl font-semibold text-gold-500">15</span>
+              <p class="text-sm text-charcoal-800/60 mt-1">ปีประสบการณ์</p>
+            </div>
+            <div>
+              <span class="font-display text-4xl md:text-5xl font-semibold text-gold-500">100%</span>
+              <p class="text-sm text-charcoal-800/60 mt-1">รับประกันคุณภาพ</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+      <svg class="w-6 h-6 text-charcoal-800/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Featured Cars Section -->
+  <section id="cars" class="py-24 lg:py-32 bg-white">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <!-- Section Header -->
+      <div class="reveal flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-16">
+        <div>
+          <span class="text-xs tracking-[0.3em] uppercase text-gold-500 font-medium">Our Collection</span>
+          <h2 class="font-display text-4xl md:text-5xl font-light mt-3">รถยนต์แนะนำ</h2>
+        </div>
+        <div class="flex items-center gap-4">
+          <button class="filter-btn active px-6 py-3 text-sm font-medium border border-charcoal-900/20 transition-all" data-filter="all">
+            ทั้งหมด
+          </button>
+          <button class="filter-btn px-6 py-3 text-sm font-medium border border-charcoal-900/20 hover:border-gold-500 transition-all" data-filter="sedan">
+            Sedan
+          </button>
+          <button class="filter-btn px-6 py-3 text-sm font-medium border border-charcoal-900/20 hover:border-gold-500 transition-all" data-filter="suv">
+            SUV
+          </button>
+          <button class="filter-btn hidden sm:block px-6 py-3 text-sm font-medium border border-charcoal-900/20 hover:border-gold-500 transition-all" data-filter="sports">
+            Sports
+          </button>
+        </div>
+      </div>
+
+      <!-- Cars Grid -->
+      <div id="carsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Car Card 1 -->
+        <article class="reveal car-card bg-cream-100 overflow-hidden" data-category="sedan">
+          <div class="relative overflow-hidden aspect-[4/3]">
+            <img 
+              src="https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&q=80" 
+              alt="Mercedes-Benz E-Class" 
+              class="car-image w-full h-full object-cover"
+            >
+            <div class="absolute top-4 left-4 bg-gold-500 text-white px-3 py-1 text-xs font-medium tracking-wider uppercase">
+              แนะนำ
+            </div>
+            <div class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-2">
+              <span class="text-xs text-charcoal-800/60">ปี</span>
+              <span class="font-display text-lg font-semibold ml-1">2022</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-start justify-between mb-3">
+              <div>
+                <p class="text-xs text-charcoal-800/60 tracking-wider uppercase">Mercedes-Benz</p>
+                <h3 class="font-display text-2xl font-medium mt-1">E-Class E300</h3>
+              </div>
+              <div class="text-right">
+                <span class="text-xs text-charcoal-800/60">ราคา</span>
+                <p class="font-display text-xl font-semibold text-gold-500">฿3,290,000</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4 text-sm text-charcoal-800/70 pt-4 border-t border-cream-300">
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                25,000 km
+              </span>
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                Auto
+              </span>
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                กรุงเทพ
+              </span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Car Card 2 -->
+        <article class="reveal car-card bg-cream-100 overflow-hidden" data-category="suv">
+          <div class="relative overflow-hidden aspect-[4/3]">
+            <img 
+              src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&q=80" 
+              alt="BMW X5" 
+              class="car-image w-full h-full object-cover"
+            >
+            <div class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-2">
+              <span class="text-xs text-charcoal-800/60">ปี</span>
+              <span class="font-display text-lg font-semibold ml-1">2023</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-start justify-between mb-3">
+              <div>
+                <p class="text-xs text-charcoal-800/60 tracking-wider uppercase">BMW</p>
+                <h3 class="font-display text-2xl font-medium mt-1">X5 xDrive40i</h3>
+              </div>
+              <div class="text-right">
+                <span class="text-xs text-charcoal-800/60">ราคา</span>
+                <p class="font-display text-xl font-semibold text-gold-500">฿4,850,000</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4 text-sm text-charcoal-800/70 pt-4 border-t border-cream-300">
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                12,000 km
+              </span>
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                Auto
+              </span>
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                กรุงเทพ
+              </span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Car Card 3 -->
+        <article class="reveal car-card bg-cream-100 overflow-hidden" data-category="sports">
+          <div class="relative overflow-hidden aspect-[4/3]">
+            <img 
+              src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&q=80" 
+              alt="Porsche 911" 
+              class="car-image w-full h-full object-cover"
+            >
+            <div class="absolute top-4 left-4 bg-charcoal-900 text-white px-3 py-1 text-xs font-medium tracking-wider uppercase">
+              Hot
+            </div>
+            <div class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-2">
+              <span class="text-xs text-charcoal-800/60">ปี</span>
+              <span class="font-display text-lg font-semibold ml-1">2021</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-start justify-between mb-3">
+              <div>
+                <p class="text-xs text-charcoal-800/60 tracking-wider uppercase">Porsche</p>
+                <h3 class="font-display text-2xl font-medium mt-1">911 Carrera S</h3>
+              </div>
+              <div class="text-right">
+                <span class="text-xs text-charcoal-800/60">ราคา</span>
+                <p class="font-display text-xl font-semibold text-gold-500">฿8,900,000</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4 text-sm text-charcoal-800/70 pt-4 border-t border-cream-300">
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                18,500 km
+              </span>
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                Auto
+              </span>
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                กรุงเทพ
+              </span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Car Card 4 -->
+        <article class="reveal car-card bg-cream-100 overflow-hidden" data-category="sedan">
+          <div class="relative overflow-hidden aspect-[4/3]">
+            <img 
+              src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80" 
+              alt="Audi A6" 
+              class="car-image w-full h-full object-cover"
+            >
+            <div class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-2">
+              <span class="text-xs text-charcoal-800/60">ปี</span>
+              <span class="font-display text-lg font-semibold ml-1">2022</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-start justify-between mb-3">
+              <div>
+                <p class="text-xs text-charcoal-800/60 tracking-wider uppercase">Audi</p>
+                <h3 class="font-display text-2xl font-medium mt-1">A6 50 TDI quattro</h3>
+              </div>
+              <div class="text-right">
+                <span class="text-xs text-charcoal-800/60">ราคา</span>
+                <p class="font-display text-xl font-semibold text-gold-500">฿2,950,000</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4 text-sm text-charcoal-800/70 pt-4 border-t border-cream-300">
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                32,000 km
+              </span>
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                Auto
+              </span>
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                กรุงเทพ
+              </span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Car Card 5 -->
+        <article class="reveal car-card bg-cream-100 overflow-hidden" data-category="suv">
+          <div class="relative overflow-hidden aspect-[4/3]">
+            <img 
+              src="https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800&q=80" 
+              alt="Range Rover" 
+              class="car-image w-full h-full object-cover"
+            >
+            <div class="absolute top-4 left-4 bg-gold-500 text-white px-3 py-1 text-xs font-medium tracking-wider uppercase">
+              ใหม่
+            </div>
+            <div class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-2">
+              <span class="text-xs text-charcoal-800/60">ปี</span>
+              <span class="font-display text-lg font-semibold ml-1">2023</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-start justify-between mb-3">
+              <div>
+                <p class="text-xs text-charcoal-800/60 tracking-wider uppercase">Land Rover</p>
+                <h3 class="font-display text-2xl font-medium mt-1">Range Rover Sport</h3>
+              </div>
+              <div class="text-right">
+                <span class="text-xs text-charcoal-800/60">ราคา</span>
+                <p class="font-display text-xl font-semibold text-gold-500">฿6,500,000</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4 text-sm text-charcoal-800/70 pt-4 border-t border-cream-300">
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                8,500 km
+              </span>
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                Auto
+              </span>
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                กรุงเทพ
+              </span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Car Card 6 -->
+        <article class="reveal car-card bg-cream-100 overflow-hidden" data-category="sports">
+          <div class="relative overflow-hidden aspect-[4/3]">
+            <img 
+              src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&q=80" 
+              alt="BMW M4" 
+              class="car-image w-full h-full object-cover"
+            >
+            <div class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-2">
+              <span class="text-xs text-charcoal-800/60">ปี</span>
+              <span class="font-display text-lg font-semibold ml-1">2022</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-start justify-between mb-3">
+              <div>
+                <p class="text-xs text-charcoal-800/60 tracking-wider uppercase">BMW</p>
+                <h3 class="font-display text-2xl font-medium mt-1">M4 Competition</h3>
+              </div>
+              <div class="text-right">
+                <span class="text-xs text-charcoal-800/60">ราคา</span>
+                <p class="font-display text-xl font-semibold text-gold-500">฿5,200,000</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4 text-sm text-charcoal-800/70 pt-4 border-t border-cream-300">
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                15,000 km
+              </span>
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                Auto
+              </span>
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                กรุงเทพ
+              </span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- View All Button -->
+      <div class="reveal mt-16 text-center">
+        <a href="#" class="inline-flex items-center gap-3 group">
+          <span class="text-sm font-medium tracking-widest uppercase">ดูรถยนต์ทั้งหมด</span>
+          <span class="w-12 h-12 border border-charcoal-900/20 flex items-center justify-center transition-all group-hover:bg-charcoal-900 group-hover:border-charcoal-900">
+            <svg class="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-24 lg:py-32 bg-cream-100">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <!-- Image Side -->
+        <div class="reveal relative">
+          <div class="aspect-[4/5] overflow-hidden">
+            <img 
+              src="https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80" 
+              alt="Showroom" 
+              class="w-full h-full object-cover"
+            >
+          </div>
+          <!-- Floating Card -->
+          <div class="absolute -bottom-8 -right-8 lg:right-8 bg-white p-6 shadow-2xl max-w-xs">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-12 h-12 bg-gold-500 flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+              </div>
+              <div>
+                <span class="font-display text-3xl font-semibold">15+</span>
+                <p class="text-sm text-charcoal-800/60">ปีประสบการณ์</p>
+              </div>
+            </div>
+            <p class="text-sm text-charcoal-800/70">ผู้เชี่ยวชาญด้านรถยนต์พรีเมียมที่คุณไว้วางใจได้</p>
+          </div>
+        </div>
+
+        <!-- Content Side -->
+        <div class="reveal lg:pl-8">
+          <span class="text-xs tracking-[0.3em] uppercase text-gold-500 font-medium">About Us</span>
+          <h2 class="font-display text-4xl md:text-5xl font-light mt-3 mb-6">
+            ทำไมต้อง<br><span class="font-semibold">Prestige Motors</span>
+          </h2>
+          <p class="text-lg text-charcoal-800/70 font-light leading-relaxed mb-8">
+            เรามีประสบการณ์กว่า 15 ปีในวงการรถยนต์พรีเมียม คัดสรรเฉพาะรถยนต์คุณภาพดีที่สุด ผ่านการตรวจสอบ 150 จุด โดยทีมช่างผู้เชี่ยวชาญ พร้อมรับประกันคุณภาพที่คุณมั่นใจได้
+          </p>
+
+          <!-- Features -->
+          <div class="space-y-6">
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 bg-cream-200 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-medium mb-1">ตรวจสอบ 150 จุด</h4>
+                <p class="text-sm text-charcoal-800/60">ทุกคันผ่านการตรวจสอบโดยผู้เชี่ยวชาญ</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 bg-cream-200 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-medium mb-1">รับประกันเครื่องยนต์</h4>
+                <p class="text-sm text-charcoal-800/60">รับประกัน 1 ปีหรือ 20,000 กิโลเมตร</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 bg-cream-200 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-medium mb-1">บริการหลังการขาย</h4>
+                <p class="text-sm text-charcoal-800/60">ทีมงานดูแลตลอด 24 ชั่วโมง</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="py-24 lg:py-32 bg-white">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <!-- Section Header -->
+      <div class="reveal text-center max-w-2xl mx-auto mb-16">
+        <span class="text-xs tracking-[0.3em] uppercase text-gold-500 font-medium">Our Services</span>
+        <h2 class="font-display text-4xl md:text-5xl font-light mt-3 mb-4">บริการของเรา</h2>
+        <p class="text-charcoal-800/70 font-light">เราให้บริการครบวงจร เพื่อให้คุณได้รถยนต์ที่ดีที่สุดด้วยประสบการณ์ที่ราบรื่น</p>
+      </div>
+
+      <!-- Services Grid -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Service 1 -->
+        <div class="reveal group p-8 bg-cream-100 hover:bg-charcoal-900 transition-all duration-500">
+          <div class="w-14 h-14 border border-gold-500 flex items-center justify-center mb-6 transition-colors group-hover:border-gold-400">
+            <svg class="w-6 h-6 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+          <h3 class="font-display text-xl font-medium mb-3 group-hover:text-white transition-colors">ค้นหารถ</h3>
+          <p class="text-sm text-charcoal-800/60 group-hover:text-cream-300 transition-colors">บอกเราว่าคุณต้องการรถคันไหน เราจะหามาให้</p>
+        </div>
+
+        <!-- Service 2 -->
+        <div class="reveal group p-8 bg-cream-100 hover:bg-charcoal-900 transition-all duration-500">
+          <div class="w-14 h-14 border border-gold-500 flex items-center justify-center mb-6 transition-colors group-hover:border-gold-400">
+            <svg class="w-6 h-6 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+          </div>
+          <h3 class="font-display text-xl font-medium mb-3 group-hover:text-white transition-colors">ตรวจสอบคุณภาพ</h3>
+          <p class="text-sm text-charcoal-800/60 group-hover:text-cream-300 transition-colors">ตรวจสอบ 150 จุดโดยผู้เชี่ยวชาญ</p>
+        </div>
+
+        <!-- Service 3 -->
+        <div class="reveal group p-8 bg-cream-100 hover:bg-charcoal-900 transition-all duration-500">
+          <div class="w-14 h-14 border border-gold-500 flex items-center justify-center mb-6 transition-colors group-hover:border-gold-400">
+            <svg class="w-6 h-6 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+            </svg>
+          </div>
+          <h3 class="font-display text-xl font-medium mb-3 group-hover:text-white transition-colors">ไฟแนนซ์</h3>
+          <p class="text-sm text-charcoal-800/60 group-hover:text-cream-300 transition-colors">อนุมัติเร็ว ดอกเบี้ยต่ำ ไม่เช็คบูโร</p>
+        </div>
+
+        <!-- Service 4 -->
+        <div class="reveal group p-8 bg-cream-100 hover:bg-charcoal-900 transition-all duration-500">
+          <div class="w-14 h-14 border border-gold-500 flex items-center justify-center mb-6 transition-colors group-hover:border-gold-400">
+            <svg class="w-6 h-6 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+            </svg>
+          </div>
+          <h3 class="font-display text-xl font-medium mb-3 group-hover:text-white transition-colors">รับซื้อ-แลกเปลี่ยน</h3>
+          <p class="text-sm text-charcoal-800/60 group-hover:text-cream-300 transition-colors">ประเมินราคาสูง รับซื้อทุกรุ่น</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="py-24 lg:py-32 bg-cream-200">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <!-- Section Header -->
+      <div class="reveal text-center max-w-2xl mx-auto mb-16">
+        <span class="text-xs tracking-[0.3em] uppercase text-gold-500 font-medium">Testimonials</span>
+        <h2 class="font-display text-4xl md:text-5xl font-light mt-3">ลูกค้าของเราพูดถึงเรา</h2>
+      </div>
+
+      <!-- Testimonials Grid -->
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Testimonial 1 -->
+        <div class="reveal bg-white p-8">
+          <div class="flex items-center gap-1 mb-6">
+            <svg class="w-5 h-5 text-gold-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <svg class="w-5 h-5 text-gold-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <svg class="w-5 h-5 text-gold-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <svg class="w-5 h-5 text-gold-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <svg class="w-5 h-5 text-gold-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </div>
+          <p class="text-charcoal-800/70 font-light leading-relaxed mb-6">
+            "บริการดีมาก ทีมงานใส่ใจทุกรายละเอียด รถที่ได้มาสภาพเยี่ยม เหมือนรถใหม่เลย แนะนำเลยครับ"
+          </p>
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-cream-300 rounded-full overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="Customer" class="w-full h-full object-cover">
+            </div>
+            <div>
+              <p class="font-medium">คุณสมชาย วงศ์ประเสริฐ</p>
+              <p class="text-sm text-charcoal-800/60">Mercedes-Benz E-Class</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial 2 -->
+        <div class="reveal bg-white p-8">
+          <div class="flex items-center gap-1 mb-6">
+            <svg class="w-5 h-5 text-gold-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <svg class="w-5 h-5 text-gold-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <svg class="w-5 h-5 text-gold-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <svg class="w-5 h-5 text-gold-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <svg class="w-5 h-5 text-gold-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </div>
+          <p class="text-charcoal-800/70 font-light leading-relaxed mb-6">
+            "เป็นครั้งแรกที่ซื้อรถมือสองแล้วรู้สึกมั่นใจมาก เอกสารครบ รถสวย ทำสัญญาเรียบร้อย ขอบคุณมากค่ะ"
+          </p>
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-cream-300 rounded-full overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" alt="Customer" class="w-full h-full object-cover">
+            </div>
+            <div>
+              <p class="font-medium">คุณนภา ศรีสวัสดิ์</p>
+              <p class="text-sm text-charcoal-800/60">BMW X5</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial 3 -->
+        <div class="reveal bg-white p-8">
+          <div class="flex items-center gap-1 mb-6">
+            <svg class="w-5 h-5 text-gold-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <svg class="w-5 h-5 text-gold-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <svg class="w-5 h-5 text-gold-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <svg class="w-5 h-5 text-gold-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <svg class="w-5 h-5 text-gold-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </div>
+          <p class="text-charcoal-800/70 font-light leading-relaxed mb-6">
+            "ซื้อรถมา 2 คันแล้ว ทั้งคู่สภาพดีมาก ราคาตรง ไม่มีค่าใช้จ่ายแอบแฝง สบายใจมากครับ"
+          </p>
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-cream-300 rounded-full overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" alt="Customer" class="w-full h-full object-cover">
+            </div>
+            <div>
+              <p class="font-medium">คุณวิทยา จันทร์แก้ว</p>
+              <p class="text-sm text-charcoal-800/60">Porsche 911</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="relative py-32 overflow-hidden">
+    <div class="absolute inset-0">
+      <img 
+        src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=80" 
+        alt="Luxury car" 
+        class="w-full h-full object-cover"
+      >
+      <div class="absolute inset-0 bg-charcoal-950/80"></div>
+    </div>
+    <div class="relative z-10 max-w-4xl mx-auto px-6 lg:px-8 text-center">
+      <div class="reveal">
+        <span class="text-xs tracking-[0.3em] uppercase text-gold-400 font-medium">Ready to Drive?</span>
+        <h2 class="font-display text-4xl md:text-5xl lg:text-6xl font-light text-white mt-4 mb-6">
+          รถคันใหม่ของคุณ<br><span class="font-semibold text-gold-400">รอคุณอยู่</span>
+        </h2>
+        <p class="text-lg text-cream-300 font-light mb-10 max-w-xl mx-auto">
+          ทีมงานพร้อมให้คำปรึกษาและนัดหมายดูรถ ไม่ต้องรอช้า ติดต่อเราวันนี้
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="tel:0812345678" class="btn-primary bg-gold-500 text-charcoal-900 px-8 py-4 text-sm font-semibold tracking-widest uppercase">
+            โทรเลย 081-234-5678
+          </a>
+          <a href="#contact" class="border border-white/30 text-white px-8 py-4 text-sm font-medium tracking-widest uppercase hover:bg-white/10 transition-colors">
+            ส่งข้อความ
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-24 lg:py-32 bg-cream-100">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-16">
+        <!-- Contact Info -->
+        <div class="reveal">
+          <span class="text-xs tracking-[0.3em] uppercase text-gold-500 font-medium">Contact Us</span>
+          <h2 class="font-display text-4xl md:text-5xl font-light mt-3 mb-6">ติดต่อเรา</h2>
+          <p class="text-charcoal-800/70 font-light mb-10">
+            พร้อมให้บริการทุกวัน ติดต่อเราได้ทุกช่องทาง
+          </p>
+
+          <div class="space-y-6 mb-10">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-white flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-medium mb-1">Showroom</h4>
+                <p class="text-sm text-charcoal-800/60">123 ถนนสุขุมวิท แขวงคลองตัน<br>เขตวัฒนา กรุงเทพฯ 10110</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-white flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-medium mb-1">โทรศัพท์</h4>
+                <p class="text-sm text-charcoal-800/60">081-234-5678<br>02-123-4567</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-white flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-medium mb-1">เวลาทำการ</h4>
+                <p class="text-sm text-charcoal-800/60">จันทร์ - เสาร์: 09:00 - 19:00<br>อาทิตย์: 10:00 - 17:00</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Social Links -->
+          <div class="flex items-center gap-4">
+            <a href="#" class="w-10 h-10 border border-charcoal-900/20 flex items-center justify-center hover:border-gold-500 hover:text-gold-500 transition-colors" aria-label="Facebook">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+            <a href="#" class="w-10 h-10 border border-charcoal-900/20 flex items-center justify-center hover:border-gold-500 hover:text-gold-500 transition-colors" aria-label="Line">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
+              </svg>
+            </a>
+            <a href="#" class="w-10 h-10 border border-charcoal-900/20 flex items-center justify-center hover:border-gold-500 hover:text-gold-500 transition-colors" aria-label="Instagram">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="reveal">
+          <form id="contactForm" class="bg-white p-8 lg:p-10">
+            <h3 class="font-display text-2xl font-medium mb-6">ส่งข้อความถึงเรา</h3>
+            
+            <div class="space-y-6">
+              <div class="grid sm:grid-cols-2 gap-6">
+                <div>
+                  <label for="name" class="block text-sm font-medium mb-2">ชื่อ-นามสกุล</label>
+                  <input 
+                    type="text" 
+                    id="name" 
+                    name="name" 
+                    required
+                    class="w-full px-4 py-3 bg-cream-100 border-0 focus:ring-2 focus:ring-gold-500 outline-none transition-all"
+                    placeholder="ชื่อของคุณ"
+                  >
+                </div>
+                <div>
+                  <label for="phone" class="block text-sm font-medium mb-2">เบอร์โทรศัพท์</label>
+                  <input 
+                    type="tel" 
+                    id="phone" 
+                    name="phone" 
+                    required
+                    class="w-full px-4 py-3 bg-cream-100 border-0 focus:ring-2 focus:ring-gold-500 outline-none transition-all"
+                    placeholder="08X-XXX-XXXX"
+                  >
+                </div>
+              </div>
+              
+              <div>
+                <label for="email" class="block text-sm font-medium mb-2">อีเมล</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  class="w-full px-4 py-3 bg-cream-100 border-0 focus:ring-2 focus:ring-gold-500 outline-none transition-all"
+                  placeholder="email@example.com"
+                >
+              </div>
+
+              <div>
+                <label for="interest" class="block text-sm font-medium mb-2">สนใจรถรุ่น</label>
+                <select 
+                  id="interest" 
+                  name="interest"
+                  class="w-full px-4 py-3 bg-cream-100 border-0 focus:ring-2 focus:ring-gold-500 outline-none transition-all"
+                >
+                  <option value="">เลือกรุ่นที่สนใจ</option>
+                  <option value="mercedes">Mercedes-Benz</option>
+                  <option value="bmw">BMW</option>
+                  <option value="audi">Audi</option>
+                  <option value="porsche">Porsche</option>
+                  <option value="range-rover">Range Rover</option>
+                  <option value="other">อื่นๆ</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="message" class="block text-sm font-medium mb-2">ข้อความ</label>
+                <textarea 
+                  id="message" 
+                  name="message" 
+                  rows="4"
+                  class="w-full px-4 py-3 bg-cream-100 border-0 focus:ring-2 focus:ring-gold-500 outline-none transition-all resize-none"
+                  placeholder="รายละเอียดที่ต้องการสอบถาม..."
+                ></textarea>
+              </div>
+
+              <button 
+                type="submit"
+                class="btn-primary w-full bg-charcoal-900 text-cream-50 py-4 text-sm font-medium tracking-widest uppercase hover:bg-charcoal-800"
+              >
+                ส่งข้อความ
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-charcoal-950 text-cream-300 py-16">
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+        <!-- Brand -->
+        <div class="lg:col-span-2">
+          <a href="#" class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 border border-gold-500 flex items-center justify-center">
+              <span class="font-display text-xl font-semibold text-gold-500">P</span>
+            </div>
+            <div>
+              <span class="font-display text-xl font-semibold text-white tracking-wide">PRESTIGE</span>
+              <span class="block text-[10px] tracking-[0.3em] text-cream-400 uppercase -mt-1">Motors</span>
+            </div>
+          </a>
+          <p class="text-sm text-cream-400 font-light leading-relaxed max-w-sm mb-6">
+            ผู้เชี่ยวชาญด้านรถยนต์พรีเมียมมือสอง คัดสรรเฉพาะรถยนต์คุณภาพดีที่สุด พร้อมรับประกันคุณภาพที่คุณมั่นใจได้
+          </p>
+          <p class="text-xs text-cream-500">&copy; 2024 Prestige Motors. All rights reserved.</p>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h4 class="font-display text-lg font-medium text-white mb-6">Quick Links</h4>
+          <ul class="space-y-3">
+            <li><a href="#cars" class="text-sm text-cream-400 hover:text-gold-500 transition-colors">สินค้าทั้งหมด</a></li>
+            <li><a href="#about" class="text-sm text-cream-400 hover:text-gold-500 transition-colors">เกี่ยวกับเรา</a></li>
+            <li><a href="#services" class="text-sm text-cream-400 hover:text-gold-500 transition-colors">บริการของเรา</a></li>
+            <li><a href="#contact" class="text-sm text-cream-400 hover:text-gold-500 transition-colors">ติดต่อเรา</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact -->
+        <div>
+          <h4 class="font-display text-lg font-medium text-white mb-6">Contact</h4>
+          <ul class="space-y-3">
+            <li class="text-sm text-cream-400">123 ถนนสุขุมวิท แขวงคลองตัน</li>
+            <li class="text-sm text-cream-400">เขตวัฒนา กรุงเทพฯ 10110</li>
+            <li><a href="tel:0812345678" class="text-sm text-cream-400 hover:text-gold-500 transition-colors">081-234-5678</a></li>
+            <li><a href="mailto:info@prestigemotors.co.th" class="text-sm text-cream-400 hover:text-gold-500 transition-colors">info@prestigemotors.co.th</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+        <p class="text-xs text-cream-500">ราคาและโปรโมชั่นอาจเปลี่ยนแปลงได้โดยไม่ต้องแจ้งให้ทราบล่วงหน้า</p>
+        <div class="flex items-center gap-6">
+          <a href="#" class="text-xs text-cream-500 hover:text-gold-500 transition-colors">นโยบายความเป็นส่วนตัว</a>
+          <a href="#" class="text-xs text-cream-500 hover:text-gold-500 transition-colors">ข้อกำหนดการใช้งาน</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // Initialize variables first
+    const navbar = document.getElementById('navbar');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const closeMobileMenu = document.getElementById('closeMobileMenu');
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const carCards = document.querySelectorAll('.car-card');
+    const contactForm = document.getElementById('contactForm');
+    
+    // Navbar scroll effect
+    let lastScrollY = 0;
+    
+    function handleScroll() {
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY > 100) {
+        navbar.classList.add('bg-cream-100/95', 'backdrop-blur-md', 'shadow-sm');
+      } else {
+        navbar.classList.remove('bg-cream-100/95', 'backdrop-blur-md', 'shadow-sm');
+      }
+      
+      lastScrollY = currentScrollY;
+    }
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // Mobile menu toggle
+    function openMobileMenu() {
+      mobileMenu.classList.remove('translate-x-full');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeMobileMenuFn() {
+      mobileMenu.classList.add('translate-x-full');
+      document.body.style.overflow = '';
+    }
+    
+    mobileMenuBtn.addEventListener('click', openMobileMenu);
+    closeMobileMenu.addEventListener('click', closeMobileMenuFn);
+    
+    mobileNavLinks.forEach(link => {
+      link.addEventListener('click', closeMobileMenuFn);
+    });
+
+    // Filter functionality
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Update active state
+        filterBtns.forEach(b => {
+          b.classList.remove('active', 'bg-charcoal-900', 'text-white', 'border-charcoal-900');
+        });
+        btn.classList.add('active', 'bg-charcoal-900', 'text-white', 'border-charcoal-900');
+        
+        const filter = btn.dataset.filter;
+        
+        carCards.forEach(card => {
+          const category = card.dataset.category;
+          
+          if (filter === 'all' || category === filter) {
+            card.style.display = 'block';
+            setTimeout(() => {
+              card.style.opacity = '1';
+              card.style.transform = 'translateY(0)';
+            }, 50);
+          } else {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+              card.style.display = 'none';
+            }, 300);
+          }
+        });
+      });
+    });
+
+    // Scroll reveal animation
+    const revealElements = document.querySelectorAll('.reveal');
+    
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('active');
+          }, index * 100);
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+    
+    revealElements.forEach(el => {
+      revealObserver.observe(el);
+    });
+
+    // Form submission
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(contactForm);
+      const data = Object.fromEntries(formData);
+      
+      // Show success message (in real app, send to server)
+      alert('ขอบคุณที่ติดต่อเรา เราจะติดต่อกลับโดยเร็วที่สุด');
+      contactForm.reset();
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          const headerOffset = 80;
+          const elementPosition = target.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+
+    // Initial scroll position check
+    handleScroll();
+  </script>
+</body>
+</html>

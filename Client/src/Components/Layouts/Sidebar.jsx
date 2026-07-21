@@ -7,6 +7,7 @@ import {
   Building2,
   BedDouble,
   Calendar,       
+  DollarSign,
   ChevronsRight,
   ChevronsLeft,
   User,
@@ -49,6 +50,12 @@ const menuItems = [
     icon: <Calendar size={18} />,
     label: "Booking",
     href: "/admin/booking/list",
+  },
+  {
+    id: "pricesetting",
+    icon: <DollarSign size={18} />,
+    label: "Price Setting",
+    href: "/admin/pricesetting",
   },
 ];
 

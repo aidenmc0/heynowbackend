@@ -167,7 +167,7 @@ const RoomDetail = () => {
                 slide={slide}
                 isActive={activeSlideIndex === sIndex}
                 isBookingSlide={sIndex === slides.length - 1}
-                bookingLink="/#contact"
+                bookingLink={`/booking?room=${room?.id}`}
               />
             </div>
           ))}

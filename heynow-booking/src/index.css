@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Prompt:wght@300;400;500;700&family=Noto+Serif+SC:wght@300;400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-warm-50 text-warm-900;
+  }
+  
+  /* English Font Family */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+    font-family: 'Playfair Display', serif;
+  }
+  
+  /* Thai Font Family (Prompt: ดูทันสมัยและอ่านง่าย) */
+  .lang-th h1, 
+  .lang-th h2, 
+  .lang-th h3, 
+  .lang-th h4, 
+  .lang-th h5, 
+  .lang-th h6 {
+    font-family: 'Prompt', sans-serif;
+  }
+
+  /* Chinese Font Family (Noto Serif SC: ดูคลาสสิกและหรูหรา) */
+  .lang-cn h1, 
+  .lang-cn h2, 
+  .lang-cn h3, 
+  .lang-cn h4, 
+  .lang-cn h5, 
+  .lang-cn h6 {
+    font-family: 'Noto Serif SC', serif;
+  }
+
+  /* Body Text */
+  .lang-th {
+    font-family: 'Prompt', sans-serif;
+  }
+  .lang-cn {
+    font-family: 'Noto Serif SC', serif;
+  }
+  /* English */
+  .lang-en {
+    font-family: 'Lato', sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    
+    /* Premium Scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: #d4c4b0 transparent;
+  }
+
+  html::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  html::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  html::-webkit-scrollbar-thumb {
+    background-color: #d4c4b0; 
+    border-radius: 10px;
+  }
+  
+  html::-webkit-scrollbar-thumb:hover {
+    background-color: #b0a290; 
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* --- Tracking Adjustment --- */
+  /* ภาษาไทยและจีนอ่านยากถ้าตัวอักษรห่างกันมาก ให้ปิด tracking-wide บางจุด */
+  .lang-th .tracking-widest,
+  .lang-cn .tracking-widest {
+    letter-spacing: normal;
+  }
+  .lang-th .tracking-wide,
+  .lang-cn .tracking-wide {
+    letter-spacing: 0.05em;
+  }
+
+  .fade-in-up {
+    animation: fadeInUp 1s ease-out forwards;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

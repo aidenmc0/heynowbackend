@@ -4,7 +4,6 @@ import { API_URL } from "../../variable";
 
 export default function CreateBooking({ onClose, onSuccess }) {
   const [form, setForm] = useState({
-    booking_id: "",
     room_id: "",
     booking_name: "",
     booking_email: "",
@@ -30,8 +29,8 @@ export default function CreateBooking({ onClose, onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.booking_id || !form.room_id || !form.booking_name || !form.booking_checkin || !form.booking_checkout) {
-      setError("กรุณากรอกข้อมูลที่จำเป็น (Booking ID, Room, Name, Check-In, Check-Out)");
+    if (!form.room_id || !form.booking_name || !form.booking_checkin || !form.booking_checkout) {
+      setError("กรุณากรอกข้อมูลที่จำเป็น (Room, Name, Check-In, Check-Out)");
       return;
     }
     setLoading(true);
@@ -74,11 +73,6 @@ export default function CreateBooking({ onClose, onSuccess }) {
             <div className="text-sm text-red-600 bg-red-50 p-3 rounded border border-red-100">{error}</div>
           )}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Booking ID *</label>
-              <input type="text" name="booking_id" value={form.booking_id} onChange={handleChange}
-                className="w-full border border-slate-200 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-400" />
-            </div>
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1">Room ID *</label>
               <input type="text" name="room_id" value={form.room_id} onChange={handleChange}

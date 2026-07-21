@@ -22,6 +22,9 @@ app.use('/employee',    require('./Routes/Employee/route'));
 app.use('/department',    require('./Routes/Department/route'));
 app.use('/room',    require('./Routes/Room/route'));
 app.use('/booking', require('./Routes/Booking/route'));
+app.use('/upload', require('./Routes/Upload/route'));
+app.use('/price-room', require('./Routes/PriceRoom/route'));
+app.use('/price-holiday', require('./Routes/PriceHoliday/route'));
 
 // Global error handler (ต้องอยู่ท้ายสุดเสมอ)
 app.use(errorHandler);

@@ -1,6 +1,7 @@
 import { useLanguage } from "../contexts/LanguageContext";
-import { motion } from "framer-motion"; // เพิ่ม import นี้
+import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 // Animation Variants สำหรับการค่อยๆ ขึ้นของแต่ละส่วน
 const textVariants = {
@@ -22,6 +23,7 @@ const containerVariants = {
 };
 
 const Hero = () => {
+  const navigate = useNavigate();
   const { content, lang, changeLanguage } = useLanguage();
   const [openStory, setOpenStory] = useState(false);
 
@@ -83,14 +85,12 @@ const Hero = () => {
             </motion.p>
 
             <motion.div variants={textVariants} className="flex flex-wrap gap-4">
-            <a
-              href="https://www.facebook.com/share/17qkwE3XuF/"
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={() => navigate("/booking")}
               className="inline-block bg-forest-600/90 backdrop-blur-sm text-white px-8 py-3 rounded-full text-sm tracking-widest uppercase border border-white/20 hover:bg-forest-700 transition-all"
             >
               {content.hero.book}
-            </a>
+            </button>
              <button
                 onClick={() => setOpenStory(true)}
                 className="bg-white/5 text-white px-8 py-3 rounded-full text-sm tracking-widest uppercase 

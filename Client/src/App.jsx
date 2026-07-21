@@ -15,6 +15,7 @@ import DepartmentList from "./Routes/Department/DepartmentList";
 
 import BookingList from "./Routes/Booking/BookingList";
 import CreateBooking from "./Routes/Booking/CreateBooking";
+import PriceSetting from "./Routes/PriceSetting/PriceSetting";
 
 import BookingNavbar from "./booking/components/Navbar";
 import BookingHero from "./booking/components/Hero";
@@ -27,6 +28,7 @@ import BookingLayout from "./booking/components/Layout";
 import BookingLocation from "./booking/components/Location";
 import BookingFooter from "./booking/components/Footer";
 import BookingRoomDetail from "./booking/components/RoomDetail";
+import BookingPage from "./booking/components/BookingPage";
 
 const isAuthenticated = () => !!localStorage.getItem("token");
 
@@ -59,6 +61,7 @@ function App() {
 
         {/* ── Customer Webpage Routes ── */}
         <Route path="/" element={<LanguageProvider><BookingHome /></LanguageProvider>} />
+        <Route path="/booking" element={<LanguageProvider><BookingPage /></LanguageProvider>} />
         <Route path="/rooms/:id" element={<LanguageProvider><BookingRoomDetail /></LanguageProvider>} />
 
         {/* ── Admin Routes ── */}
@@ -79,6 +82,7 @@ function App() {
         <Route path="/admin/department/list" element={<PrivateRoute> <DepartmentList /> </PrivateRoute>} />
         <Route path="/admin/booking/list" element={<PrivateRoute> <BookingList /> </PrivateRoute>} />
         <Route path="/admin/booking/create" element={<PrivateRoute> <CreateBooking /> </PrivateRoute>} />
+        <Route path="/admin/pricesetting" element={<PrivateRoute> <PriceSetting /> </PrivateRoute>} />
 
         {/* fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

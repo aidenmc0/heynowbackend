@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   Mail, Phone, CalendarDays, FileText, Hash,
-  User, Users, Dog, CreditCard, ClipboardList, Check, X,
+  User, Users, Dog, CreditCard, ClipboardList, Check, X, Image, Upload,
 } from "lucide-react";
 import DataListPage from "../../Components/DataTable/DetailListPage";
 import CreateBooking from "./CreateBooking";
@@ -31,6 +31,39 @@ function SectionCard({ title, children }) {
       </div>
       <div className="px-4 py-1">{children}</div>
     </div>
+  );
+}
+
+// ── Slip Image Viewer (thumbnail + lightbox) ──
+function SlipThumb({ path }) {
+  const [open, setOpen] = useState(false);
+  const isImage = /\.(jpe?g|png|gif|webp)$/i.test(path);
+  if (!isImage) {
+    return (
+      <a href={path} target="_blank" rel="noopener noreferrer"
+        className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 underline">
+        <FileText size={14} /> View Slip
+      </a>
+    );
+  }
+  return (
+    <>
+      <img src={path} alt="Slip"
+        className="mt-1 rounded-lg border border-slate-200 max-h-28 object-contain cursor-pointer hover:opacity-85 transition-opacity"
+        onClick={() => setOpen(true)} />
+      {open && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm"
+          onClick={() => setOpen(false)}>
+          <div className="relative max-w-[90vw] max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setOpen(false)}
+              className="absolute -top-3 -right-3 z-10 w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center text-slate-700 hover:text-slate-900">
+              <X size={16} />
+            </button>
+            <img src={path} alt="Slip" className="max-w-full max-h-[90vh] rounded-xl shadow-2xl" />
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -79,7 +112,28 @@ function BookingExpandedContent(b) {
       </SectionCard>
       <SectionCard title="Payment & Confirmation">
         {b.confirm_id && <InfoRow icon={<CreditCard size={14} />} label="Confirm ID" value={b.confirm_id} mono />}
-        {b.booking_slip && <InfoRow icon={<FileText size={14} />} label="Slip" value={b.booking_slip} />}
+        {b.confirm_status && <InfoRow icon={<Check size={14} />} label="Status" value={b.confirm_status} />}
+        {b.confirm_emp_code && <InfoRow icon={<User size={14} />} label="Confirmed By" value={b.confirm_emp_code} />}
+        {b.confirm_createdat && <InfoRow icon={<CalendarDays size={14} />} label="Confirmed At" value={new Date(b.confirm_createdat).toLocaleString("th-TH")} />}
+        {b.confirm_remark && <InfoRow icon={<FileText size={14} />} label="Remark" value={b.confirm_remark} />}
+        {b.booking_slip && (
+          <div className="flex items-start gap-3 py-2.5 border-b border-slate-100 last:border-0">
+            <span className="mt-0.5 flex-shrink-0 text-slate-400"><Image size={14} /></span>
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Payment Slip</p>
+              <SlipThumb path={b.booking_slip} />
+            </div>
+          </div>
+        )}
+        {b.confirm_slip && (
+          <div className="flex items-start gap-3 py-2.5 border-b border-slate-100 last:border-0">
+            <span className="mt-0.5 flex-shrink-0 text-slate-400"><Image size={14} /></span>
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Confirm Slip</p>
+              <SlipThumb path={b.confirm_slip} />
+            </div>
+          </div>
+        )}
       </SectionCard>
     </>
   );
@@ -96,9 +150,14 @@ const SEARCH_FIELDS = ["booking_id", "room_id", "booking_name", "booking_email",
 function ConfirmButton({ booking, onRequestConfirm }) {
   if (booking.confirm_id) {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-700 text-[11px] font-semibold">
-        <Check size={12} /> Confirmed
-      </span>
+      <div className="flex flex-col items-end gap-0.5">
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-700 text-[11px] font-semibold">
+          <Check size={12} /> Confirmed
+        </span>
+        {booking.confirm_emp_code && (
+          <span className="text-[10px] text-slate-400">by {booking.confirm_emp_code}</span>
+        )}
+      </div>
     );
   }
   return (
@@ -113,9 +172,45 @@ function ConfirmButton({ booking, onRequestConfirm }) {
 
 function ConfirmDialog({ booking, onConfirm, onCancel }) {
   const [loading, setLoading] = useState(false);
+  const [confirmSlipFile, setConfirmSlipFile] = useState(null);
+  const [confirmSlipPreview, setConfirmSlipPreview] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleFile = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) return alert("File too large (max 10MB)");
+    setConfirmSlipFile(file);
+    const reader = new FileReader();
+    reader.onload = (ev) => setConfirmSlipPreview(ev.target.result);
+    reader.readAsDataURL(file);
+  };
+
+  const handleConfirmClick = async () => {
+    setLoading(true);
+    try {
+      let confirmSlipPath = null;
+      if (confirmSlipFile) {
+        setUploading(true);
+        const fd = new FormData();
+        fd.append("slip", confirmSlipFile);
+        const uploadRes = await fetch("/upload/confirm-slip", { method: "POST", body: fd });
+        if (!uploadRes.ok) throw new Error("Slip upload failed");
+        const uploadData = await uploadRes.json();
+        confirmSlipPath = uploadData.path;
+        setUploading(false);
+      }
+      await onConfirm(booking, confirmSlipPath);
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-xl shadow-xl w-[380px] p-6">
+      <div className="bg-white rounded-xl shadow-xl w-[420px] p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-base font-bold text-slate-800">Confirm Check-In</h3>
           <button onClick={onCancel} className="text-slate-400 hover:text-slate-600">
@@ -125,25 +220,49 @@ function ConfirmDialog({ booking, onConfirm, onCancel }) {
         <p className="text-sm text-slate-600 mb-4">
           Are you sure you want to confirm check-in for this booking?
         </p>
-        <div className="bg-slate-50 rounded-lg p-3 mb-5 space-y-1 text-sm">
+        <div className="bg-slate-50 rounded-lg p-3 mb-4 space-y-2 text-sm">
           <div><span className="font-semibold text-slate-500">Name:</span> {booking.booking_name}</div>
           <div><span className="font-semibold text-slate-500">Room:</span> {booking.room_name_th || booking.room_id}</div>
           <div><span className="font-semibold text-slate-500">Check-in:</span> {formatDate(booking.booking_checkin)}</div>
           <div><span className="font-semibold text-slate-500">Check-out:</span> {formatDate(booking.booking_checkout)}</div>
+          {booking.booking_slip && /\.(jpe?g|png|gif|webp)$/i.test(booking.booking_slip) && (
+            <div>
+              <span className="font-semibold text-slate-500">Slip:</span>
+              <img src={booking.booking_slip} alt="Slip"
+                className="mt-1.5 rounded-lg border border-slate-200 max-h-28 object-contain w-full" />
+            </div>
+          )}
         </div>
+
+        {/* Confirm Slip Upload */}
+        <div className="border border-dashed border-slate-300 rounded-lg p-3 mb-4">
+          <p className="text-[11px] font-semibold text-slate-500 mb-2">Confirm Slip (optional)</p>
+          {confirmSlipPreview ? (
+            <div className="relative">
+              <img src={confirmSlipPreview} alt="Preview" className="max-h-24 rounded object-contain mx-auto" />
+              <button
+                onClick={() => { setConfirmSlipFile(null); setConfirmSlipPreview(null); }}
+                className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center text-[10px]"
+              ><X size={12} /></button>
+            </div>
+          ) : (
+            <label className="flex items-center justify-center gap-2 py-3 text-xs text-slate-400 hover:text-slate-600 cursor-pointer">
+              <Upload size={14} /> Upload receipt / confirm slip
+              <input type="file" accept="image/*,.pdf" onChange={handleFile} className="hidden" />
+            </label>
+          )}
+        </div>
+
         <div className="flex gap-2 justify-end">
           <button onClick={onCancel} className="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors">
             Cancel
           </button>
           <button
-            onClick={async () => {
-              setLoading(true);
-              try { await onConfirm(booking); } finally { setLoading(false); }
-            }}
-            disabled={loading}
+            onClick={handleConfirmClick}
+            disabled={loading || uploading}
             className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white text-sm font-semibold transition-colors"
           >
-            {loading ? "Confirming..." : "Confirm"}
+            {uploading ? "Uploading..." : loading ? "Confirming..." : "Confirm"}
           </button>
         </div>
       </div>
@@ -157,13 +276,14 @@ export default function BookingList() {
   const [confirmBooking, setConfirmBooking] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const handleConfirm = async (booking) => {
+  const handleConfirm = async (booking, confirmSlipPath) => {
     const token = localStorage.getItem("token");
+    const employee = JSON.parse(localStorage.getItem("employee") || "{}");
     try {
-      const res = await fetch(`${API_URL}/booking/${booking.booking_id}`, {
-        method: "PUT",
+      const res = await fetch(`${API_URL}/booking/${booking.booking_id}/confirm`, {
+        method: "POST",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ confirm_id: `CNF-${Date.now()}` }),
+        body: JSON.stringify({ emp_code: employee.emp_code, confirm_slip: confirmSlipPath }),
       });
       if (!res.ok) throw new Error("Confirm failed");
       setConfirmBooking(null);
@@ -211,7 +331,7 @@ export default function BookingList() {
     header: "Price",
     cell: (b) => (
       <div className="font-medium text-slate-800 text-xs text-right">
-        {b.room_price ? `${Number(b.room_price).toLocaleString()} ฿` : "—"}
+        {b.booking_price ? `${Number(b.booking_price).toLocaleString()} ฿` : b.room_price ? `${Number(b.room_price).toLocaleString()} ฿/night` : "—"}
       </div>
     ),
   },
