@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
-import { LanguageProvider } from "./booking/contexts/LanguageContext";
 
 import Login from "./Routes/Login";
 import Dashboard from "./Routes/Dashboard/Dashboard";
@@ -17,41 +16,11 @@ import BookingList from "./Routes/Booking/BookingList";
 import CreateBooking from "./Routes/Booking/CreateBooking";
 import PriceSetting from "./Routes/PriceSetting/PriceSetting";
 
-import BookingNavbar from "./booking/components/Navbar";
-import BookingHero from "./booking/components/Hero";
-import BookingStory from "./booking/components/Story";
-import BookingHighlights from "./booking/components/Highlights";
-import BookingRooms from "./booking/components/Rooms";
-import BookingRestaurant from "./booking/components/Restaurant";
-import BookingGallery from "./booking/components/Gallery";
-import BookingLayout from "./booking/components/Layout";
-import BookingLocation from "./booking/components/Location";
-import BookingFooter from "./booking/components/Footer";
-import BookingRoomDetail from "./booking/components/RoomDetail";
-import BookingPage from "./booking/components/BookingPage";
-
 const isAuthenticated = () => !!localStorage.getItem("token");
 
 const PrivateRoute = ({ children }) => {
   return isAuthenticated() ? children : <Navigate to="/admin/login" replace />;
 };
-
-function BookingHome() {
-  return (
-    <>
-      <BookingNavbar />
-      <BookingHero />
-      <BookingStory />
-      <BookingHighlights />
-      <BookingRooms />
-      <BookingRestaurant />
-      <BookingGallery />
-      <BookingLayout />
-      <BookingLocation />
-      <BookingFooter />
-    </>
-  );
-}
 
 function App() {
   return (
@@ -59,10 +28,8 @@ function App() {
       <Analytics />
       <Routes>
 
-        {/* ── Customer Webpage Routes ── */}
-        <Route path="/" element={<LanguageProvider><BookingHome /></LanguageProvider>} />
-        <Route path="/booking" element={<LanguageProvider><BookingPage /></LanguageProvider>} />
-        <Route path="/rooms/:id" element={<LanguageProvider><BookingRoomDetail /></LanguageProvider>} />
+        {/* ── Root → Dashboard ── */}
+        <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
 
         {/* ── Admin Routes ── */}
         <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />

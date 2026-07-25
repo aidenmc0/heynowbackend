@@ -3,7 +3,7 @@
  * Location: src/Routes/Controls/Room/RoomList.jsx
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   ChevronDown, Filter, DoorOpen, Users, DollarSign, Hash,
   BookOpen, FileText, Info,
@@ -11,6 +11,7 @@ import {
 import DataListPage from "../../Components/DataTable/DetailListPage";
 import CreateRoom from "./CreateRoom";
 import EditRoom from "./EditRoom";
+import { API_URL } from "../../variable";
 
 // ─── Expanded Content Helpers (same pattern as Employee) ─────────────────────
 
