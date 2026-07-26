@@ -21,12 +21,12 @@ router.get('/', async (req, res) => {
     if (roomIds.length > 0) {
       const { data: rooms } = await supabase
         .from('room_tbls')
-        .select('room_id, room_price, room_detail_th_tbls(room_detail_th_name), room_detail_en_tbls(room_detail_en_name)')
+        .select('*, room_detail_th_tbls(*), room_detail_en_tbls(*)')
         .in('room_id', roomIds);
 
       (rooms || []).forEach(r => {
-        roomNameMapTH[r.room_id] = r.room_detail_th_tbls?.room_detail_th_name || r.room_id;
-        roomNameMapEN[r.room_id] = r.room_detail_en_tbls?.room_detail_en_name || r.room_id;
+        roomNameMapTH[r.room_id] = r.room_detail_th_tbls?.room_detail_th_name || null;
+        roomNameMapEN[r.room_id] = r.room_detail_en_tbls?.room_detail_en_name || null;
         roomPriceMap[r.room_id] = r.room_price;
       });
     }
@@ -44,8 +44,8 @@ router.get('/', async (req, res) => {
 
     const result = (bookings || []).map(b => ({
       ...b,
-      room_name_th: roomNameMapTH[b.room_id] || b.room_id,
-      room_name_en: roomNameMapEN[b.room_id] || b.room_id,
+      room_detail_th_name: roomNameMapTH[b.room_id],
+      room_detail_en_name: roomNameMapEN[b.room_id],
       room_price: roomPriceMap[b.room_id],
       confirm_status: confirmMap[b.confirm_id]?.confirm_status || null,
       confirm_emp_code: confirmMap[b.confirm_id]?.emp_code || null,

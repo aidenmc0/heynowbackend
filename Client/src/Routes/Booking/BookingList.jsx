@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {
-  Mail, Phone, CalendarDays, FileText, Hash,
+  Mail, Phone, CalendarDays, FileText, Hash, DoorOpen,
   User, Users, Dog, CreditCard, ClipboardList, Check, X, Image, Upload,
 } from "lucide-react";
 import DataListPage from "../../Components/DataTable/DetailListPage";
@@ -84,7 +84,7 @@ function BookingExpandedContent(b) {
         </div>
         <div className="min-w-0 flex-1">
           <h4 className="text-base font-bold text-slate-900 leading-tight truncate">{b.booking_name}</h4>
-          <p className="text-xs text-slate-500 truncate mt-0.5">Room: {b.room_id}</p>
+          <p className="text-xs text-slate-500 truncate mt-0.5">Room: {b.room_detail_th_name || "—"}</p>
           <p className="text-xs text-slate-500 mt-0.5">
             {checkInDate} — {checkOutDate}
           </p>
@@ -98,6 +98,7 @@ function BookingExpandedContent(b) {
       <SectionCard title="Booking Details">
         <InfoRow icon={<Hash size={14} />} label="Booking ID" value={b.booking_id} mono />
         <InfoRow icon={<Hash size={14} />} label="Room ID" value={b.room_id} mono />
+        <InfoRow icon={<DoorOpen size={14} />} label="Room Name" value={`${b.room_detail_th_name || "—"} / ${b.room_detail_en_name || "—"}`} />
         <InfoRow icon={<CalendarDays size={14} />} label="Check-In" value={checkInDate} />
         <InfoRow icon={<CalendarDays size={14} />} label="Check-Out" value={checkOutDate} />
         {b.booking_detail && <InfoRow icon={<FileText size={14} />} label="Detail" value={b.booking_detail} />}
@@ -222,7 +223,7 @@ function ConfirmDialog({ booking, onConfirm, onCancel }) {
         </p>
         <div className="bg-slate-50 rounded-lg p-3 mb-4 space-y-2 text-sm">
           <div><span className="font-semibold text-slate-500">Name:</span> {booking.booking_name}</div>
-          <div><span className="font-semibold text-slate-500">Room:</span> {booking.room_name_th || booking.room_id}</div>
+          <div><span className="font-semibold text-slate-500">Room:</span> {booking.room_detail_th_name || "—"}</div>
           <div><span className="font-semibold text-slate-500">Check-in:</span> {formatDate(booking.booking_checkin)}</div>
           <div><span className="font-semibold text-slate-500">Check-out:</span> {formatDate(booking.booking_checkout)}</div>
           {booking.booking_slip && /\.(jpe?g|png|gif|webp)$/i.test(booking.booking_slip) && (
@@ -319,10 +320,10 @@ export default function BookingList() {
     cell: (b) => (
       <div className="text-xs leading-relaxed">
         <div className="text-slate-700">
-          <span className="font-semibold text-slate-500">TH:</span> {b.room_name_th || b.room_id}
+          <span className="font-semibold text-slate-500">TH:</span> {b.room_detail_th_name || "—"}
         </div>
         <div className="text-slate-700">
-          <span className="font-semibold text-slate-500">EN:</span> {b.room_name_en || b.room_id}
+          <span className="font-semibold text-slate-500">EN:</span> {b.room_detail_en_name || "—"}
         </div>
       </div>
     ),
@@ -418,7 +419,7 @@ export default function BookingList() {
     searchFields: SEARCH_FIELDS,
     expandedContent: BookingExpandedContent,
     title: (b) => b.booking_name,
-    subtitle: (b) => `Room ${b.room_id}`,
+    subtitle: (b) => `${b.room_detail_th_name || "—"} · ${b.room_detail_en_name || ""}`,
     addButtonLabel: "+ Add Booking",
     loadingText: "Loading booking data...",
     emptyText: "No bookings found",
